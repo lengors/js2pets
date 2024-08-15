@@ -7,7 +7,7 @@
 
   <groupId>io.github.lengors</groupId>
   <artifactId>js2pets</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.0-dev.1</version>
   <name>js2pets</name>
   <url>https://github.com/lengors/js2pets</url>
   <description>Set of extensions and extra functionality for jsonschema2pojos library and plugins.</description>
