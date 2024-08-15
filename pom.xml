@@ -6,11 +6,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.github.lengors</groupId>
-  <artifactId>maven-java-template</artifactId>
+  <artifactId>js2pets</artifactId>
   <version>1.0.0</version>
-  <name>maven-java-template</name>
-  <url>https://github.com/lengors/maven-java-template</url>
-  <description>Template repository for maven projects written in java.</description>
+  <name>js2pets</name>
+  <url>https://github.com/lengors/js2pets</url>
+  <description>Set of extensions and extra functionality for jsonschema2pojos library and plugins.</description>
 
   <developers>
     <developer>
@@ -20,7 +20,7 @@
   </developers>
 
   <scm>
-    <url>https://github.com/lengors/maven-java-template</url>
+    <url>https://github.com/lengors/js2pets</url>
   </scm>
 
   <licenses>
@@ -353,58 +353,6 @@
                 <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
               </compilerArgs>
             </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>jar</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-jar-plugin</artifactId>
-            <version>${maven.jar.version}</version>
-            <configuration>
-              <archive>
-                <manifest>
-                  <addClasspath>true</addClasspath>
-                  <mainClass>io.github.lengors.maven_java_template.Example</mainClass>
-                </manifest>
-              </archive>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-
-    <profile>
-      <id>assemble</id>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
-            <version>${maven.assembly.version}</version>
-            <configuration>
-              <archive>
-                <manifest>
-                  <mainClass>io.github.lengors.maven_java_template.Example</mainClass>
-                </manifest>
-              </archive>
-              <descriptorRefs>
-                <descriptorRef>jar-with-dependencies</descriptorRef>
-              </descriptorRefs>
-            </configuration>
-            <executions>
-              <execution>
-                <phase>package</phase>
-                <goals>
-                  <goal>single</goal>
-                </goals>
-              </execution>
-            </executions>
           </plugin>
         </plugins>
       </build>
