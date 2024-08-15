@@ -41,6 +41,7 @@
     <!-- Dependency and plugins versions -->
     <maven.central-publishing.version>0.5.0</maven.central-publishing.version>
     <maven.checkerframework.version>3.46.0</maven.checkerframework.version>
+    <maven.jsonschema2pojo.version>1.2.1</maven.jsonschema2pojo.version>
     <maven.checkstyle.version>3.4.0</maven.checkstyle.version>
     <maven.delombok.version>1.18.20.0</maven.delombok.version>
     <maven.compiler.version>3.13.0</maven.compiler.version>
@@ -73,6 +74,11 @@
   </dependencyManagement>
 
   <dependencies>
+    <dependency>
+      <groupId>org.jsonschema2pojo</groupId>
+      <artifactId>jsonschema2pojo-core</artifactId>
+      <version>${maven.jsonschema2pojo.version}</version>
+    </dependency>
 
     <dependency>
       <groupId>org.checkerframework</groupId>
