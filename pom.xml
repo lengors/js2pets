@@ -45,7 +45,6 @@
     <maven.checkstyle.version>3.4.0</maven.checkstyle.version>
     <maven.delombok.version>1.18.20.0</maven.delombok.version>
     <maven.compiler.version>3.13.0</maven.compiler.version>
-    <maven.assembly.version>3.7.1</maven.assembly.version>
     <maven.mockito.version>5.12.0</maven.mockito.version>
     <maven.javadoc.version>3.8.0</maven.javadoc.version>
     <maven.lombok.version>1.18.34</maven.lombok.version>
@@ -53,7 +52,6 @@
     <maven.source.version>3.3.1</maven.source.version>
     <maven.junit.version>5.10.3</maven.junit.version>
     <maven.gpg.version>3.2.4</maven.gpg.version>
-    <maven.jar.version>3.4.2</maven.jar.version>
 
     <!-- SonarCloud -->
     <sonar.organization>lengors-github</sonar.organization>
@@ -124,10 +122,8 @@
         <artifactId>maven-checkstyle-plugin</artifactId>
         <version>${maven.checkstyle.version}</version>
         <configuration>
-          <sourceDirectories>
-            <sourceDirectory>src/main/java</sourceDirectory>
-            <sourceDirectory>src/test/java</sourceDirectory>
-          </sourceDirectories>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          <configLocation>checkstyle.xml</configLocation>
         </configuration>
       </plugin>
 
