@@ -12,7 +12,7 @@ plugins:
   - - "@semantic-release/changelog"
     - changelogFile: CHANGELOG.md
   - - "@semantic-release/exec"
-    - prepareCmd: "./mvnw versions:set -DnewVersion=${nextRelease.version}"
+    - prepareCmd: "./mvnw versions:set-property -Dproperty=revision -DnewVersion=${nextRelease.version}"
       publishCmd: "./mvnw deploy -s ./settings.xml"
   - "@semantic-release/github"
   - - "@semantic-release/git"
