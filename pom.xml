@@ -28,6 +28,7 @@
     <maven.compiler.target>21</maven.compiler.target>
 
     <!-- Configure maven plugins -->
+    <flatten.flatten.skip>true</flatten.flatten.skip>
     <maven.install.skip>true</maven.install.skip>
     <maven.deploy.skip>true</maven.deploy.skip>
 
@@ -37,6 +38,7 @@
     <maven.jsonschema2pojo.version>1.2.1</maven.jsonschema2pojo.version>
     <maven.commons-lang3.version>3.16.0</maven.commons-lang3.version>
     <maven.mockito.version>5.12.0</maven.mockito.version>
+    <maven.flatten.version>1.6.0</maven.flatten.version>
     <maven.lombok.version>1.18.34</maven.lombok.version>
     <maven.junit.version>5.10.3</maven.junit.version>
     <maven.api.version>3.9.9</maven.api.version>
@@ -103,4 +105,26 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <version>${maven.flatten.version}</version>
+        <configuration>
+          <flattenMode>ossrh</flattenMode>
+        </configuration>
+        <executions>
+          <execution>
+            <id>flatten</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
