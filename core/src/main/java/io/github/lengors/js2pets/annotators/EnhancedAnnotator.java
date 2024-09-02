@@ -1,14 +1,16 @@
 package io.github.lengors.js2pets.annotators;
 
+import org.jsonschema2pojo.Annotator;
+
 import com.sun.codemodel.JMethod;
 
 /**
- * Extension for jsonschema2pojo's annotator that allows to listen to
- * constructor generation and annotate it.
+ * Enhanced annotator that extends the base functionality of jsonschema2pojo's allowing respective implementations to
+ * listen to constructor generation and annotate it.
  *
  * @author lengors
  */
-public interface Js2petsAnnotator extends org.jsonschema2pojo.Annotator {
+public interface EnhancedAnnotator extends Annotator {
 
   /**
    * Listener to constructor generation for annotations.
