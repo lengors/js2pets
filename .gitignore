@@ -29,6 +29,9 @@ target/
 hs_err_pid*
 replay_pid*
 
+# Flatten files #
+.flattened-pom.xml
+
 ### IntelliJ IDEA ###
 .idea/modules.xml
 .idea/jarRepositories.xml
