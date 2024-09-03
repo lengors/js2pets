@@ -17,14 +17,6 @@ import com.sun.codemodel.JDefinedClass;
 import io.github.lengors.js2pets.annotators.EnhancedAnnotator;
 import lombok.Getter;
 
-/**
- * Unit tests for the {@link ConstructorRule} class.
- *
- * This test class verifies the correct behavior of the {@link ConstructorRule}, particularly its ability to include or
- * exclude no-args constructors based on configuration and to notify annotators if required.
- *
- * @author lengors
- */
 @ExtendWith(MockitoExtension.class)
 class ConstructorRuleTest implements ConstructorRuleTestSuite {
 
@@ -60,31 +52,16 @@ class ConstructorRuleTest implements ConstructorRuleTestSuite {
   @MonotonicNonNull
   private RuleFactory ruleFactory;
 
-  /**
-   * Tests that the rule correctly includes a no-args constructor when configured to do so.
-   *
-   * @throws JClassAlreadyExistsException if a class with the same name already exists.
-   */
   @Test
   void shouldCorrectlyIncludeNoArgsConstructor() throws JClassAlreadyExistsException {
     testForSuccessWithoutPluginImplementation(true);
   }
 
-  /**
-   * Tests that the rule correctly excludes a no-args constructor when configured to do so.
-   *
-   * @throws JClassAlreadyExistsException if a class with the same name already exists.
-   */
   @Test
   void shouldCorrectlyExcludeNoArgsConstructor() throws JClassAlreadyExistsException {
     testForSuccessWithoutPluginImplementation(false);
   }
 
-  /**
-   * Tests that the rule fails to infer the inclusion of a no-args constructor when the Mojo configuration is not used.
-   *
-   * @throws JClassAlreadyExistsException if a class with the same name already exists.
-   */
   @Test
   void shouldFailToInferNoArgsConstructorInclusionDueToMojoNotUsed() throws JClassAlreadyExistsException {
     ConstructorRuleTestRunner
@@ -92,31 +69,16 @@ class ConstructorRuleTest implements ConstructorRuleTestSuite {
         .testForFailure();
   }
 
-  /**
-   * Tests that the rule correctly infers the inclusion of a no-args constructor based on plugin configuration.
-   *
-   * @throws JClassAlreadyExistsException if a class with the same name already exists.
-   */
   @Test
   void shouldCorrectlyInferIncludeNoArgsConstructor() throws JClassAlreadyExistsException {
     testForSuccessWithPluginImplementation(true);
   }
 
-  /**
-   * Tests that the rule correctly infers the exclusion of a no-args constructor based on plugin configuration.
-   *
-   * @throws JClassAlreadyExistsException if a class with the same name already exists.
-   */
   @Test
   void shouldCorrectlyInferExcludeNoArgsConstructor() throws JClassAlreadyExistsException {
     testForSuccessWithPluginImplementation(false);
   }
 
-  /**
-   * Tests that the rule correctly infers the default inclusion of a no-args constructor.
-   *
-   * @throws JClassAlreadyExistsException if a class with the same name already exists.
-   */
   @Test
   void shouldCorrectlyInferDefaultInclusionOfNoArgsConstructor() throws JClassAlreadyExistsException {
     ConstructorRuleTestRunner
@@ -124,11 +86,6 @@ class ConstructorRuleTest implements ConstructorRuleTestSuite {
         .testForSuccess(true);
   }
 
-  /**
-   * Tests that the rule fails to infer the inclusion of a no-args constructor due to multiple executions.
-   *
-   * @throws JClassAlreadyExistsException if a class with the same name already exists.
-   */
   @Test
   void shouldFailToInferNoArgsConstructorInclusionDueToMultipleExecutions() throws JClassAlreadyExistsException {
     ConstructorRuleTestRunner
@@ -136,11 +93,6 @@ class ConstructorRuleTest implements ConstructorRuleTestSuite {
         .testForFailure();
   }
 
-  /**
-   * Tests that the rule correctly notifies the annotator about the constructor if configured.
-   *
-   * @throws JClassAlreadyExistsException if a class with the same name already exists.
-   */
   @Test
   void shouldCorrectlyNotifyAnnotator() throws JClassAlreadyExistsException {
     final var annotator = Mockito.mock(EnhancedAnnotator.class);

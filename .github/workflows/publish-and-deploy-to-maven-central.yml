@@ -14,6 +14,8 @@ jobs:
     name: Publish new version
     runs-on: ubuntu-latest
     environment: publisher
+    outputs:
+      new_release_published: ${{ steps.semantic-release.outputs.new_release_published }}
     steps:
       - name: Create GitHub app token
         uses: actions/create-github-app-token@v1
@@ -43,6 +45,7 @@ jobs:
           cache: maven
       - name: Publish version
         uses: cycjimmy/semantic-release-action@v4
+        id: semantic-release
         with:
           extra_plugins: |
             @semantic-release/exec
@@ -59,6 +62,7 @@ jobs:
     needs: publish-new-version
     runs-on: ubuntu-latest
     environment: deployment
+    if: needs.publish-new-version.outputs.new_release_published == 'true'
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

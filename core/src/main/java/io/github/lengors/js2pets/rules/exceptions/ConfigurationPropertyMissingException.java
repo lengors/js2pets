@@ -4,7 +4,8 @@ import lombok.Getter;
 
 /**
  * Exception thrown when a required configuration property is missing and its value cannot be inferred.
- *
+ * <br />
+ * <br />
  * This exception is a specific type of {@link NullPointerException} that includes the name of the missing configuration
  * property for easier debugging and context understanding.
  *

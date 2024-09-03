@@ -28,14 +28,7 @@ import lombok.Getter;
 import java.util.Map;
 import java.util.Collections;
 
-/**
- * A test runner class for testing the functionality of the {@link ConstructorRule}. * This class provides utilities to
- * set up and run tests on the {@link ConstructorRule} by simulating different configurations and verifying the expected
- * outcomes.
- *
- * @author lengors
- */
-public final class ConstructorRuleTestRunner {
+final class ConstructorRuleTestRunner {
   /**
    * The node name used for applying the rule, initialized as an empty string.
    */
@@ -120,13 +113,7 @@ public final class ConstructorRuleTestRunner {
         js2petsConstructorRuleTestSuite.getCurrentSchema());
   }
 
-  /**
-   * Runs a success test on the rule with a custom annotator, verifying the inclusion of constructors.
-   *
-   * @param annotator                        The annotator used to annotate the class.
-   * @param expectedIncludeNoArgsConstructor Whether a no-args constructor should be included.
-   */
-  public void testForSuccess(final Annotator annotator, final boolean expectedIncludeNoArgsConstructor) {
+  void testForSuccess(final Annotator annotator, final boolean expectedIncludeNoArgsConstructor) {
     Mockito
         .when(js2petsConstructorRuleTestSuite
             .getRuleFactory()
@@ -139,62 +126,30 @@ public final class ConstructorRuleTestRunner {
     Assertions.assertTrue(constructors.contains(argsConstructor));
   }
 
-  /**
-   * Runs a success test on the rule with a default Jackson2Annotator, verifying the inclusion of constructors.
-   *
-   * @param expectedIncludeNoArgsConstructor Whether a no-args constructor should be included.
-   */
-  public void testForSuccess(final boolean expectedIncludeNoArgsConstructor) {
+  void testForSuccess(final boolean expectedIncludeNoArgsConstructor) {
     Mockito
         .when(generationConfig.getInclusionLevel())
         .thenReturn(InclusionLevel.NON_NULL);
     testForSuccess(new Jackson2Annotator(generationConfig), expectedIncludeNoArgsConstructor);
   }
 
-  /**
-   * Runs a failure test on the rule, expecting a {@link ConfigurationPropertyMissingException}.
-   */
-  public void testForFailure() {
+  void testForFailure() {
     Assertions.assertThrows(ConfigurationPropertyMissingException.class, this::apply);
   }
 
-  /**
-   * Prepares a test runner for testing without using the plugin implementation.
-   *
-   * @param js2petsConstructorRuleTestSuite The test suite to use.
-   * @param includeNoArgsConstructor        Whether to include a no-args constructor.
-   * @return A configured test runner instance.
-   * @throws JClassAlreadyExistsException If a class with the same name already exists.
-   */
-  public static ConstructorRuleTestRunner prepareWithoutPluginImplementation(
+  static ConstructorRuleTestRunner prepareWithoutPluginImplementation(
       final ConstructorRuleTestSuite js2petsConstructorRuleTestSuite,
       final @Nullable Boolean includeNoArgsConstructor) throws JClassAlreadyExistsException {
     return new ConstructorRuleTestRunner(js2petsConstructorRuleTestSuite, includeNoArgsConstructor, false);
   }
 
-  /**
-   * Prepares a test runner with a specified number of plugin executions.
-   *
-   * @param js2petsConstructorRuleTestSuite The test suite to use.
-   * @param pluginExecutionCount            The number of plugin executions to simulate.
-   * @return A configured test runner instance.
-   * @throws JClassAlreadyExistsException If a class with the same name already exists.
-   */
-  public static ConstructorRuleTestRunner prepare(
+  static ConstructorRuleTestRunner prepare(
       final ConstructorRuleTestSuite js2petsConstructorRuleTestSuite,
       final int pluginExecutionCount) throws JClassAlreadyExistsException {
     return prepare(js2petsConstructorRuleTestSuite, pluginExecutionCount, Mockito.mock(Plugin.class));
   }
 
-  /**
-   * Prepares a test runner for testing with a plugin implementation.
-   *
-   * @param js2petsConstructorRuleTestSuite The test suite to use.
-   * @param includeNoArgsConstructor        Whether to include a no-args constructor.
-   * @return A configured test runner instance.
-   * @throws JClassAlreadyExistsException If a class with the same name already exists.
-   */
-  public static ConstructorRuleTestRunner prepare(
+  static ConstructorRuleTestRunner prepare(
       final ConstructorRuleTestSuite js2petsConstructorRuleTestSuite,
       final boolean includeNoArgsConstructor) throws JClassAlreadyExistsException {
     final var plugin = Mockito.mock(Plugin.class);
