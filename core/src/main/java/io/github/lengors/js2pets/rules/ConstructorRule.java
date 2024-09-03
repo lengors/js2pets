@@ -34,7 +34,8 @@ import java.lang.reflect.Modifier;
 /**
  * Constructor rule wrapper that removes the no-args constructor if the respective flag is enabled. This rule also
  * notifies the annotator if it supports constructor callbacks.
- *
+ * <br />
+ * <br />
  * This class extends the functionality provided by the jsonschema2pojo library by adding a customizable rule for
  * generating or omitting no-argument constructors based on configuration settings.
  *
@@ -65,8 +66,7 @@ public class ConstructorRule implements Rule<JDefinedClass, JDefinedClass> {
    * @param nodeName      The name of the JSON node being processed.
    * @param node          The JSON node to which the rule is being applied.
    * @param parent        The parent JSON node, or null if there isn't one.
-   * @param type          The Java class that is being generated from the JSON
-   *                      schema.
+   * @param type          The Java class that is being generated from the JSON schema.
    * @param currentSchema The current schema being processed.
    * @return The {@link JDefinedClass} after applying the rule.
    */
