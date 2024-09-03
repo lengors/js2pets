@@ -115,7 +115,7 @@
         <version>${maven.checkstyle.version}</version>
         <configuration>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
-          <configLocation>checkstyle.xml</configLocation>
+          <configLocation>${project.basedir}/../checkstyle.xml</configLocation>
         </configuration>
       </plugin>
 
@@ -285,6 +285,7 @@
                 <arg>10000</arg>
                 <arg>-Xmaxwarns</arg>
                 <arg>10000</arg>
+                <arg>-AskipUses=^org[.]junit[.]jupiter[.]api[.]Assertions$</arg>
               </compilerArgs>
             </configuration>
           </plugin>
