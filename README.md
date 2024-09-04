@@ -1,15 +1,16 @@
 # Welcome to js2pets &middot; [![GitHub license](https://img.shields.io/github/license/lengors/js2pets?color=blue)](https://github.com/facebook/react/blob/main/LICENSE) [![javadoc](https://javadoc.io/badge2/io.github.lengors/js2pets/javadoc.svg?color=red)](https://javadoc.io/doc/io.github.lengors/js2pets) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=lengors_js2pets&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=lengors_js2pets)
 
-Welcome to **js2pets**, a project aimed at extending the functionality of [jsonschema2pojos](https://github.com/joelittlejohn/jsonschema2pojo), which generates Java POJOs from JSON schemas. This library builds upon the capabilities of `jsonschema2pojos` to provide additional features and enhancements.
+Welcome to **js2pets**, a project aimed at extending the functionality of [jsonschema2pojos](https://github.com/joelittlejohn/jsonschema2pojo), which generates Java POJOs from JSON schemas. This library builds upon the capabilities of **jsonschema2pojo** to provide additional features and enhancements.
 
 ## Features
 
-- **Custom Rule Factory**: Extend the capabilities of `jsonschema2pojo` by providing custom rules that suit your project needs.
-- **Flexible Integration**: Easily integrate with the `jsonschema2pojo` Maven plugin by adding `js2pets` as a dependency.
+- **Custom Rule Factory**: Extend the capabilities of **jsonschema2pojo** by providing custom rules that suit your project needs.
+- **Maven and Gradle Support**: Easily integrate **js2pets** with both Maven and Gradle projects, ensuring compatibility with your preferred build system.
+- **Flexible Integration**: Easily integrate with the **jsonschema2pojo** Maven plugin by adding **js2pets** as a dependency.
 
 ## Getting Started
 
-To use `js2pets` in your project, follow these steps:
+To use **js2pets** in your project, follow these steps:
 
 ### Prerequisites
 
@@ -20,7 +21,7 @@ To use `js2pets` in your project, follow these steps:
 
 #### Maven
 
-Add `js2pets` as a dependency in the `jsonschema2pojo` plugin configuration of your Maven project:
+Add **js2pets** as a dependency in the **jsonschema2pojo** plugin configuration of your Maven project:
 
 ```xml
 <plugin>
@@ -52,7 +53,7 @@ Add `js2pets` as a dependency in the `jsonschema2pojo` plugin configuration of y
 
 #### Gradle
 
-To use `js2pets` with Gradle, configure your `build.gradle.kts` as follows:
+To use **js2pets** with Gradle, configure your `build.gradle.kts` as follows:
 
 ```kotlin
 plugins {
@@ -77,7 +78,7 @@ jsonSchema2Pojo {
 
 ## Usage
 
-Once configured, the `js2pets` custom rules will automatically apply when generating Java classes from your JSON schemas. Customize your JSON schema as needed, and the generated Java classes will reflect the custom rules defined in `js2pets`.
+Once configured, the **js2pets** custom rules will automatically apply when generating Java classes from your JSON schemas. Customize your JSON schema as needed, and the generated Java classes will reflect the custom rules defined in **js2pets**.
 
 ### Example
 
@@ -97,7 +98,7 @@ Given the following JSON schema:
 }
 ```
 
-The `jsonschema2pojo` plugin, enhanced with `js2pets`, will generate a Java class that includes the constructors but is able to leave out the no-args constructor.
+The **jsonschema2pojo** plugin, enhanced with **js2pets**, will generate a Java class that includes the constructors but is able to leave out the no-args constructor.
 
 ## Documentation and Resources
 
