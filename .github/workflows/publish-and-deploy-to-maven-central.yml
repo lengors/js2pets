@@ -1,5 +1,5 @@
 ---
-name: Publish package to maven central
+name: Publish and deploy package to maven central
 
 on:
   push:
@@ -10,10 +10,12 @@ on:
       - dev
 
 jobs:
-  deploy-and-publish:
-    name: Deploy and publish package
+  publish-new-version:
+    name: Publish new version
     runs-on: ubuntu-latest
-    environment: deployment
+    environment: publisher
+    outputs:
+      new_release_published: ${{ steps.semantic-release.outputs.new_release_published }}
     steps:
       - name: Create GitHub app token
         uses: actions/create-github-app-token@v1
@@ -41,11 +43,9 @@ jobs:
           java-version: "21"
           distribution: temurin
           cache: maven
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
-      - name: Publish package
-        id: semantic
+      - name: Publish version
         uses: cycjimmy/semantic-release-action@v4
+        id: semantic-release
         with:
           extra_plugins: |
             @semantic-release/exec
@@ -56,6 +56,36 @@ jobs:
           GIT_AUTHOR_EMAIL: ${{ steps.import-gpg.outputs.email }}
           GIT_COMMITTER_NAME: ${{ steps.import-gpg.outputs.name }}
           GIT_COMMITTER_EMAIL: ${{ steps.import-gpg.outputs.email }}
+
+  deploy-package-to-maven-central:
+    name: Deploy package to Maven Central
+    needs: publish-new-version
+    runs-on: ubuntu-latest
+    environment: deployment
+    if: needs.publish-new-version.outputs.new_release_published == 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+          ref: ${{ github.ref }}
+      - name: Import GPG key
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.GPG_PRIVATE_KEY }}
+          passphrase: ${{ secrets.GPG_PASSPHRASE }}
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: temurin
+          cache: maven
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
+      - name: Deploy package
+        run: ./mvnw deploy -s ./settings.xml
+        env:
           MAVEN_GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
           MAVEN_CENTRAL_USERNAME: ${{ secrets.MAVEN_CENTRAL_USERNAME }}
           MAVEN_CENTRAL_PASSWORD: ${{ secrets.MAVEN_CENTRAL_PASSWORD }}
