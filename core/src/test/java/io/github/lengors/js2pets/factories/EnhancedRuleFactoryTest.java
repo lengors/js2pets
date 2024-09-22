@@ -1,7 +1,6 @@
 package io.github.lengors.js2pets.factories;
 
 import org.apache.commons.lang3.function.TriFunction;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jsonschema2pojo.Annotator;
@@ -15,6 +14,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import io.github.lengors.js2pets.assertions.AssertionUtils;
 import io.github.lengors.js2pets.rules.ConstructorRule;
 import lombok.Getter;
 
@@ -115,9 +115,9 @@ class EnhancedRuleFactoryTest {
   private void testEnhancedRuleFactoryWithAllArguments(
       final TriFunction<GenerationConfig, Annotator, SchemaStore, ? extends EnhancedRuleFactory> ruleFactoryGenerator,
       final @Nullable Boolean expectedIncludeNoArgsConstructor) {
-    assertNotNull(generationConfig);
-    assertNotNull(annotator);
-    assertNotNull(schemaStore);
+    AssertionUtils.assertNotNull(generationConfig);
+    AssertionUtils.assertNotNull(annotator);
+    AssertionUtils.assertNotNull(schemaStore);
 
     final var enhancedRuleFactory = ruleFactoryGenerator.apply(generationConfig, annotator, schemaStore);
     testEnhancedRuleFactory(enhancedRuleFactory, expectedIncludeNoArgsConstructor);
@@ -131,7 +131,7 @@ class EnhancedRuleFactoryTest {
       final Function<GenerationConfig, ? extends EnhancedRuleFactory> enhancedRuleFactoryGenerator,
       final @Nullable Boolean expectedIncludeNoArgsConstructor) {
     final var actualGenerationConfig = testEnhancedRuleFactoryWithDefaultJackson2Annotator(() -> {
-      assertNotNull(generationConfig);
+      AssertionUtils.assertNotNull(generationConfig);
       return enhancedRuleFactoryGenerator.apply(generationConfig);
     }, expectedIncludeNoArgsConstructor);
     Assertions.assertEquals(generationConfig, actualGenerationConfig);
@@ -144,11 +144,6 @@ class EnhancedRuleFactoryTest {
         enhancedRuleFactoryGenerator,
         expectedIncludeNoArgsConstructor);
     Assertions.assertInstanceOf(DefaultGenerationConfig.class, actualGenerationConfig);
-  }
-
-  @EnsuresNonNull("#1")
-  private static void assertNotNull(final @Nullable Object object) {
-    Assertions.assertNotNull(object);
   }
 
   private static GenerationConfig testEnhancedRuleFactoryWithDefaultJackson2Annotator(
@@ -166,12 +161,12 @@ class EnhancedRuleFactoryTest {
       final var mockedJackson2Annotator = jacksonConstructed.getFirst();
       final var arguments = jackson2AnnotatorArgumentsCollector.getArguments(mockedJackson2Annotator);
 
-      assertNotNull(arguments);
+      AssertionUtils.assertNotNull(arguments);
       Assertions.assertEquals(JACKSON2_ANNOTATOR_ARGUMENT_COUNT, arguments.size());
 
       final var actualGenerationConfig = arguments.getFirst();
 
-      assertNotNull(actualGenerationConfig);
+      AssertionUtils.assertNotNull(actualGenerationConfig);
       Assertions.assertEquals(enhancedRuleFactory.getGenerationConfig(), actualGenerationConfig);
       Assertions.assertEquals(mockedJackson2Annotator, enhancedRuleFactory.getAnnotator());
       Assertions.assertInstanceOf(SchemaStore.class, enhancedRuleFactory.getSchemaStore());
@@ -195,7 +190,7 @@ class EnhancedRuleFactoryTest {
       final var mockedConstructorRule = constructed.getFirst();
       final var arguments = mockedConstruction.getArguments(mockedConstructorRule);
 
-      assertNotNull(arguments);
+      AssertionUtils.assertNotNull(arguments);
       Assertions.assertEquals(CONSTRUCTOR_RULE_ARGUMENT_COUNT, arguments.size());
 
       final var actualRuleFactory = arguments.get(0);
