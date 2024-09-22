@@ -18,7 +18,7 @@
 
   <properties>
     <!-- Version -->
-    <revision>1.1.0-dev.1</revision>
+    <revision>1.1.0-dev.2</revision>
 
     <!-- Project general settings -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

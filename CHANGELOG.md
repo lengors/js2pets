@@ -1,3 +1,8 @@
+# [v1.1.0-dev.2](https://github.com/lengors/js2pets/compare/v1.1.0-dev.1...v1.1.0-dev.2) (2024-09-22)
+
+## ✨ New Features
+- [`e7a79ec`](https://github.com/lengors/js2pets/commit/e7a79ec)  Add annotator supporting checkerframework
+
 # [v1.1.0-dev.1](https://github.com/lengors/js2pets/compare/v1.0.1-dev.1...v1.1.0-dev.1) (2024-09-22)
 
 ## ✨ New Features
