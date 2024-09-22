@@ -1,3 +1,18 @@
+# [v1.1.0-dev.2](https://github.com/lengors/js2pets/compare/v1.1.0-dev.1...v1.1.0-dev.2) (2024-09-22)
+
+## ✨ New Features
+- [`e7a79ec`](https://github.com/lengors/js2pets/commit/e7a79ec)  Add annotator supporting checkerframework
+
+# [v1.1.0-dev.1](https://github.com/lengors/js2pets/compare/v1.0.1-dev.1...v1.1.0-dev.1) (2024-09-22)
+
+## ✨ New Features
+- [`772446c`](https://github.com/lengors/js2pets/commit/772446c)  Add object rule for type notification
+
+# [v1.0.1-dev.1](https://github.com/lengors/js2pets/compare/v1.0.0...v1.0.1-dev.1) (2024-09-22)
+
+## 🐛 Bug Fixes
+- [`c9abca9`](https://github.com/lengors/js2pets/commit/c9abca9)  Constructor rules correctly notify annotators in composite annotators
+
 # v1.0.0 (2024-09-04)
 
 ## ✨ New Features
