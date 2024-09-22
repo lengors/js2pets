@@ -7,6 +7,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.sun.codemodel.JMethod;
+import com.sun.codemodel.JType;
 
 @ExtendWith(MockitoExtension.class)
 class AnnotatorUtilsTest {
@@ -22,5 +23,19 @@ class AnnotatorUtilsTest {
     Mockito
         .verify(enhancedAnnotator, Mockito.only())
         .constructor(testConstructor);
+  }
+
+  @Test
+  void shouldCorrectlyNotifyAnnotatorWithType() {
+
+    final var testType = Mockito.mock(JType.class);
+    final var enhancedAnnotator = Mockito.mock(EnhancedAnnotator.class);
+    final var compositeAnnotator = new CompositeAnnotator(enhancedAnnotator);
+
+    AnnotatorUtils.type(compositeAnnotator, testType);
+
+    Mockito
+        .verify(enhancedAnnotator, Mockito.only())
+        .type(testType);
   }
 }
