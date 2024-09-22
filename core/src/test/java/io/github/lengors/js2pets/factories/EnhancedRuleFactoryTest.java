@@ -1,7 +1,6 @@
 package io.github.lengors.js2pets.factories;
 
 import org.apache.commons.lang3.function.TriFunction;
-import org.checkerframework.checker.nullness.qual.EnsuresNonNull;
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jsonschema2pojo.Annotator;
@@ -15,7 +14,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import io.github.lengors.js2pets.assertions.AssertionUtils;
 import io.github.lengors.js2pets.rules.ConstructorRule;
+import io.github.lengors.js2pets.rules.ObjectRule;
 import lombok.Getter;
 
 import java.util.function.Supplier;
@@ -29,6 +30,11 @@ class EnhancedRuleFactoryTest {
   private static final int CONSTRUCTOR_RULE_CONSTRUCT_COUNT = 1;
 
   /**
+   * Number of objects constructed of type {@link ObjectRule}.
+   */
+  private static final int OBJECT_RULE_CONSTRUCT_COUNT = 1;
+
+  /**
    * Number of objects constructed of type {@link Jackson2Annotator}.
    */
   private static final int JACKSON2_ANNOTATOR_CONSTRUCT_COUNT = 1;
@@ -37,6 +43,11 @@ class EnhancedRuleFactoryTest {
    * Number of arguments for construction of objects of type {@link ConstructorRule}.
    */
   private static final int CONSTRUCTOR_RULE_ARGUMENT_COUNT = 3;
+
+  /**
+   * Number of arguments for construction of objects of type {@link ObjectRule}.
+   */
+  private static final int OBJECT_RULE_ARGUMENT_COUNT = 2;
 
   /**
    * Number of arguments for construction of objects of type {@link Jackson2Annotator}.
@@ -115,9 +126,9 @@ class EnhancedRuleFactoryTest {
   private void testEnhancedRuleFactoryWithAllArguments(
       final TriFunction<GenerationConfig, Annotator, SchemaStore, ? extends EnhancedRuleFactory> ruleFactoryGenerator,
       final @Nullable Boolean expectedIncludeNoArgsConstructor) {
-    assertNotNull(generationConfig);
-    assertNotNull(annotator);
-    assertNotNull(schemaStore);
+    AssertionUtils.assertNotNull(generationConfig);
+    AssertionUtils.assertNotNull(annotator);
+    AssertionUtils.assertNotNull(schemaStore);
 
     final var enhancedRuleFactory = ruleFactoryGenerator.apply(generationConfig, annotator, schemaStore);
     testEnhancedRuleFactory(enhancedRuleFactory, expectedIncludeNoArgsConstructor);
@@ -131,7 +142,7 @@ class EnhancedRuleFactoryTest {
       final Function<GenerationConfig, ? extends EnhancedRuleFactory> enhancedRuleFactoryGenerator,
       final @Nullable Boolean expectedIncludeNoArgsConstructor) {
     final var actualGenerationConfig = testEnhancedRuleFactoryWithDefaultJackson2Annotator(() -> {
-      assertNotNull(generationConfig);
+      AssertionUtils.assertNotNull(generationConfig);
       return enhancedRuleFactoryGenerator.apply(generationConfig);
     }, expectedIncludeNoArgsConstructor);
     Assertions.assertEquals(generationConfig, actualGenerationConfig);
@@ -144,11 +155,6 @@ class EnhancedRuleFactoryTest {
         enhancedRuleFactoryGenerator,
         expectedIncludeNoArgsConstructor);
     Assertions.assertInstanceOf(DefaultGenerationConfig.class, actualGenerationConfig);
-  }
-
-  @EnsuresNonNull("#1")
-  private static void assertNotNull(final @Nullable Object object) {
-    Assertions.assertNotNull(object);
   }
 
   private static GenerationConfig testEnhancedRuleFactoryWithDefaultJackson2Annotator(
@@ -166,12 +172,12 @@ class EnhancedRuleFactoryTest {
       final var mockedJackson2Annotator = jacksonConstructed.getFirst();
       final var arguments = jackson2AnnotatorArgumentsCollector.getArguments(mockedJackson2Annotator);
 
-      assertNotNull(arguments);
+      AssertionUtils.assertNotNull(arguments);
       Assertions.assertEquals(JACKSON2_ANNOTATOR_ARGUMENT_COUNT, arguments.size());
 
       final var actualGenerationConfig = arguments.getFirst();
 
-      assertNotNull(actualGenerationConfig);
+      AssertionUtils.assertNotNull(actualGenerationConfig);
       Assertions.assertEquals(enhancedRuleFactory.getGenerationConfig(), actualGenerationConfig);
       Assertions.assertEquals(mockedJackson2Annotator, enhancedRuleFactory.getAnnotator());
       Assertions.assertInstanceOf(SchemaStore.class, enhancedRuleFactory.getSchemaStore());
@@ -195,7 +201,7 @@ class EnhancedRuleFactoryTest {
       final var mockedConstructorRule = constructed.getFirst();
       final var arguments = mockedConstruction.getArguments(mockedConstructorRule);
 
-      assertNotNull(arguments);
+      AssertionUtils.assertNotNull(arguments);
       Assertions.assertEquals(CONSTRUCTOR_RULE_ARGUMENT_COUNT, arguments.size());
 
       final var actualRuleFactory = arguments.get(0);
@@ -205,6 +211,28 @@ class EnhancedRuleFactoryTest {
       Assertions.assertEquals(enhancedRuleFactory, actualRuleFactory);
       Assertions.assertEquals(expectedIncludeNoArgsConstructor, actualIncludeNoArgsConstructor);
       Assertions.assertInstanceOf(org.jsonschema2pojo.rules.ConstructorRule.class, actualSuperConstructorRule);
+    }
+
+    try (var mockedConstruction = new EnhancedMockedConstruction<>(ObjectRule.class)) {
+      final var objectRule = enhancedRuleFactory.getObjectRule();
+
+      Assertions.assertInstanceOf(ObjectRule.class, objectRule);
+
+      final var constructed = mockedConstruction.constructed();
+
+      Assertions.assertEquals(OBJECT_RULE_CONSTRUCT_COUNT, constructed.size());
+
+      final var mockedObjectRule = constructed.getFirst();
+      final var arguments = mockedConstruction.getArguments(mockedObjectRule);
+
+      AssertionUtils.assertNotNull(arguments);
+      Assertions.assertEquals(OBJECT_RULE_ARGUMENT_COUNT, arguments.size());
+
+      final var actualRuleFactory = arguments.get(0);
+      final var actualSuperObjectRule = arguments.get(1);
+
+      Assertions.assertEquals(enhancedRuleFactory, actualRuleFactory);
+      Assertions.assertInstanceOf(org.jsonschema2pojo.rules.ObjectRule.class, actualSuperObjectRule);
     }
   }
 }

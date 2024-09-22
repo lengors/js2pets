@@ -15,9 +15,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JMethod;
 
-import io.github.lengors.js2pets.annotators.EnhancedAnnotator;
+import io.github.lengors.js2pets.annotators.AnnotatorUtils;
 import io.github.lengors.js2pets.rules.exceptions.ConfigurationPropertyMissingException;
 import lombok.AllArgsConstructor;
+import lombok.experimental.ExtensionMethod;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,6 +43,7 @@ import java.lang.reflect.Modifier;
  * @author lengors
  */
 @AllArgsConstructor
+@ExtensionMethod({ AnnotatorUtils.class })
 public class ConstructorRule implements Rule<JDefinedClass, JDefinedClass> {
   /**
    * Rule factory from where we get generation configuration among other utilities.
@@ -83,9 +85,8 @@ public class ConstructorRule implements Rule<JDefinedClass, JDefinedClass> {
       removeConstructors(clazz, ruleFactory);
     }
 
-    if (ruleFactory.getAnnotator() instanceof EnhancedAnnotator annotator) {
-      IteratorUtils.forEach(clazz.constructors(), annotator::constructor);
-    }
+    final var annotator = ruleFactory.getAnnotator();
+    IteratorUtils.forEach(clazz.constructors(), constructor -> annotator.constructor(constructor));
 
     return clazz;
   }
