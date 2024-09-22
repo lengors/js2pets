@@ -1,3 +1,8 @@
+# [v1.0.1-dev.1](https://github.com/lengors/js2pets/compare/v1.0.0...v1.0.1-dev.1) (2024-09-22)
+
+## 🐛 Bug Fixes
+- [`c9abca9`](https://github.com/lengors/js2pets/commit/c9abca9)  Constructor rules correctly notify annotators in composite annotators
+
 # v1.0.0 (2024-09-04)
 
 ## ✨ New Features
