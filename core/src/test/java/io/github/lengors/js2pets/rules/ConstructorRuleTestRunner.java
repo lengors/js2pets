@@ -32,7 +32,7 @@ final class ConstructorRuleTestRunner {
   /**
    * The node name used for applying the rule, initialized as an empty string.
    */
-  public static final String NODE_NAME = StringUtils.EMPTY;
+  private static final String NODE_NAME = StringUtils.EMPTY;
 
   /**
    * The rule under test for generating constructors in a defined class.
