@@ -1,3 +1,10 @@
+# v1.0.0 (2024-09-04)
+
+## ✨ New Features
+- [`0969d16`](https://github.com/lengors/js2pets/commit/0969d16)  Added extended annotator 
+- [`01963ee`](https://github.com/lengors/js2pets/commit/01963ee)  New constructor rule 
+- [`c33df5c`](https://github.com/lengors/js2pets/commit/c33df5c)  New enhanced rule factory
+
 # v1.0.0-beta.1 (2024-09-03)
 
 ## ✨ New Features
