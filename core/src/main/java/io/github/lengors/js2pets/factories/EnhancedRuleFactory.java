@@ -10,8 +10,11 @@ import org.jsonschema2pojo.rules.Rule;
 import org.jsonschema2pojo.rules.RuleFactory;
 
 import com.sun.codemodel.JDefinedClass;
+import com.sun.codemodel.JPackage;
+import com.sun.codemodel.JType;
 
 import io.github.lengors.js2pets.rules.ConstructorRule;
+import io.github.lengors.js2pets.rules.ObjectRule;
 
 /**
  * {@link EnhancedRuleFactory} is a custom implementation of the {@link RuleFactory} that provides additional
@@ -122,6 +125,16 @@ public class EnhancedRuleFactory extends RuleFactory {
   @Override
   public Rule<JDefinedClass, JDefinedClass> getConstructorRule() {
     return new ConstructorRule(this, includeNoArgsConstructor, super.getConstructorRule());
+  }
+
+  /**
+   * Returns a custom {@code ObjectRule} that notifies the annotator when applicable.
+   *
+   * @return A {@link ObjectRule} configured according to the factory settings.
+   */
+  @Override
+  public Rule<JPackage, JType> getObjectRule() {
+    return new ObjectRule(this, super.getObjectRule());
   }
 
   /**
