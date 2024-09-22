@@ -16,6 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import io.github.lengors.js2pets.assertions.AssertionUtils;
 import io.github.lengors.js2pets.rules.ConstructorRule;
+import io.github.lengors.js2pets.rules.ObjectRule;
 import lombok.Getter;
 
 import java.util.function.Supplier;
@@ -29,6 +30,11 @@ class EnhancedRuleFactoryTest {
   private static final int CONSTRUCTOR_RULE_CONSTRUCT_COUNT = 1;
 
   /**
+   * Number of objects constructed of type {@link ObjectRule}.
+   */
+  private static final int OBJECT_RULE_CONSTRUCT_COUNT = 1;
+
+  /**
    * Number of objects constructed of type {@link Jackson2Annotator}.
    */
   private static final int JACKSON2_ANNOTATOR_CONSTRUCT_COUNT = 1;
@@ -37,6 +43,11 @@ class EnhancedRuleFactoryTest {
    * Number of arguments for construction of objects of type {@link ConstructorRule}.
    */
   private static final int CONSTRUCTOR_RULE_ARGUMENT_COUNT = 3;
+
+  /**
+   * Number of arguments for construction of objects of type {@link ObjectRule}.
+   */
+  private static final int OBJECT_RULE_ARGUMENT_COUNT = 2;
 
   /**
    * Number of arguments for construction of objects of type {@link Jackson2Annotator}.
@@ -200,6 +211,28 @@ class EnhancedRuleFactoryTest {
       Assertions.assertEquals(enhancedRuleFactory, actualRuleFactory);
       Assertions.assertEquals(expectedIncludeNoArgsConstructor, actualIncludeNoArgsConstructor);
       Assertions.assertInstanceOf(org.jsonschema2pojo.rules.ConstructorRule.class, actualSuperConstructorRule);
+    }
+
+    try (var mockedConstruction = new EnhancedMockedConstruction<>(ObjectRule.class)) {
+      final var objectRule = enhancedRuleFactory.getObjectRule();
+
+      Assertions.assertInstanceOf(ObjectRule.class, objectRule);
+
+      final var constructed = mockedConstruction.constructed();
+
+      Assertions.assertEquals(OBJECT_RULE_CONSTRUCT_COUNT, constructed.size());
+
+      final var mockedObjectRule = constructed.getFirst();
+      final var arguments = mockedConstruction.getArguments(mockedObjectRule);
+
+      AssertionUtils.assertNotNull(arguments);
+      Assertions.assertEquals(OBJECT_RULE_ARGUMENT_COUNT, arguments.size());
+
+      final var actualRuleFactory = arguments.get(0);
+      final var actualSuperObjectRule = arguments.get(1);
+
+      Assertions.assertEquals(enhancedRuleFactory, actualRuleFactory);
+      Assertions.assertInstanceOf(org.jsonschema2pojo.rules.ObjectRule.class, actualSuperObjectRule);
     }
   }
 }

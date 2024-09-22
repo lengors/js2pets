@@ -7,6 +7,7 @@ import org.jsonschema2pojo.Annotator;
 import org.jsonschema2pojo.CompositeAnnotator;
 
 import com.sun.codemodel.JMethod;
+import com.sun.codemodel.JType;
 
 import lombok.experimental.UtilityClass;
 
@@ -44,5 +45,15 @@ public class AnnotatorUtils {
     } else if (annotator instanceof EnhancedAnnotator enhancedAnnotator) {
       action.accept(enhancedAnnotator, value);
     }
+  }
+
+  /**
+   * Invokes the type callback if applicable to the annotator.
+   *
+   * @param annotator The annotator to notify.
+   * @param type      The generated type to notify of.
+   */
+  public void type(final Annotator annotator, final JType type) {
+    dispatch(annotator, type, EnhancedAnnotator::type);
   }
 }
