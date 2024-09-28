@@ -9,15 +9,6 @@
  * classes from JSON schemas with additional customizations.
  * <br />
  * <br />
- * Key classes include:
- * <ul>
- * <li>{@link EnhancedRuleFactory}: A custom {@link org.jsonschema2pojo.rules.RuleFactory} that provides additional
- * options for generating constructors.</li>
- * <li>{@link EnhancedRuleFactory.ExcludeNoArgsConstructor}: A factory configuration that excludes no-argument
- * constructors.</li>
- * <li>{@link EnhancedRuleFactory.IncludeNoArgsConstructor}: A factory configuration that includes no-argument
- * constructors.</li>
- * </ul>
  * This package is part of the js2pets project, which aims to extend the functionality of jsonschema2pojo for specific
  * use cases.
  *

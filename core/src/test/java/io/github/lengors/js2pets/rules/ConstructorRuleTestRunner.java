@@ -90,13 +90,11 @@ final class ConstructorRuleTestRunner {
             .extraInterfaces(GenerationConfig.class))
         : Mockito.mock(GenerationConfig.class);
 
-    if (includeNoArgsConstructor == null) {
-      Mockito
-          .when(js2petsConstructorRuleTestSuite
-              .getRuleFactory()
-              .getGenerationConfig())
-          .thenReturn(generationConfig);
-    }
+    Mockito
+        .when(js2petsConstructorRuleTestSuite
+            .getRuleFactory()
+            .getGenerationConfig())
+        .thenReturn(generationConfig);
 
     constructorRule = new ConstructorRule(
         js2petsConstructorRuleTestSuite.getRuleFactory(),

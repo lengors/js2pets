@@ -1,9 +1,11 @@
 package io.github.lengors.js2pets.rules;
 
 import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
+import org.jsonschema2pojo.GenerationConfig;
 import org.jsonschema2pojo.Schema;
 import org.jsonschema2pojo.rules.Rule;
 import org.jsonschema2pojo.rules.RuleFactory;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -15,8 +17,10 @@ import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JDefinedClass;
 
 import io.github.lengors.js2pets.annotators.EnhancedAnnotator;
+import io.github.lengors.js2pets.assertions.AssertionUtils;
 import lombok.Getter;
 
+@Getter
 @ExtendWith(MockitoExtension.class)
 class ConstructorRuleTest implements ConstructorRuleTestSuite {
 
@@ -24,7 +28,6 @@ class ConstructorRuleTest implements ConstructorRuleTestSuite {
    * Mock rule used to simulate the super constructor rule behavior.
    */
   @Mock
-  @Getter
   @MonotonicNonNull
   private Rule<JDefinedClass, JDefinedClass> superConstructorRule;
 
@@ -32,7 +35,6 @@ class ConstructorRuleTest implements ConstructorRuleTestSuite {
    * Mock JSON node used for testing.
    */
   @Mock
-  @Getter
   @MonotonicNonNull
   private JsonNode node;
 
@@ -40,7 +42,6 @@ class ConstructorRuleTest implements ConstructorRuleTestSuite {
    * Mock schema used for testing.
    */
   @Mock
-  @Getter
   @MonotonicNonNull
   private Schema currentSchema;
 
@@ -48,7 +49,6 @@ class ConstructorRuleTest implements ConstructorRuleTestSuite {
    * Mock rule factory used to provide configuration and utilities for testing.
    */
   @Mock
-  @Getter
   @MonotonicNonNull
   private RuleFactory ruleFactory;
 
@@ -104,6 +104,31 @@ class ConstructorRuleTest implements ConstructorRuleTestSuite {
     Mockito
         .verify(annotator, Mockito.only())
         .constructor(runner.getArgsConstructor());
+  }
+
+  @Test
+  void shouldFailWhenGeneratingBuildersUsingInnerClassAndNoArgsConstructorIsExcluded() {
+    final var nonNullRuleFactory = ruleFactory;
+    final var nonNullSuperConstructorRule = superConstructorRule;
+
+    AssertionUtils.assertNotNull(nonNullRuleFactory);
+    AssertionUtils.assertNotNull(nonNullSuperConstructorRule);
+
+    final var generationConfig = Mockito.mock(GenerationConfig.class);
+
+    Mockito
+        .when(generationConfig.isGenerateBuilders())
+        .thenReturn(true);
+    Mockito
+        .when(generationConfig.isUseInnerClassBuilders())
+        .thenReturn(true);
+    Mockito
+        .when(nonNullRuleFactory.getGenerationConfig())
+        .thenReturn(generationConfig);
+
+    Assertions.assertThrows(
+        IllegalArgumentException.class,
+        () -> new ConstructorRule(nonNullRuleFactory, false, nonNullSuperConstructorRule));
   }
 
   private void testForSuccessWithoutPluginImplementation(final boolean includeNoArgsConstructor)

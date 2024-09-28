@@ -21,6 +21,7 @@ import io.github.lengors.js2pets.annotators.EnhancedAnnotator;
 import io.github.lengors.js2pets.assertions.AssertionUtils;
 import lombok.Getter;
 
+@Getter
 @ExtendWith(MockitoExtension.class)
 class ObjectRuleTest {
   /**
@@ -32,7 +33,6 @@ class ObjectRuleTest {
    * The rule under test for generating types in a package.
    */
   @Mock
-  @Getter
   @MonotonicNonNull
   private Rule<JPackage, JType> superObjectRule;
 
