@@ -1,6 +1,7 @@
 package io.github.lengors.js2pets.annotators;
 
 import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.jsonschema2pojo.Annotator;
@@ -29,21 +30,34 @@ public class AnnotatorUtils {
   }
 
   private <T> void dispatch(final Annotator annotator, final T value, final BiConsumer<EnhancedAnnotator, T> action) {
+    streamAnnotators(annotator)
+        .filter(EnhancedAnnotator.class::isInstance)
+        .forEach(leafAnnotator -> action.accept((EnhancedAnnotator) leafAnnotator, value));
+  }
+
+  /**
+   * Returns a flat stream of annotators by traversing the given annotator if it's a composite annotator.
+   *
+   * @param annotator The source annotator.
+   * @return The stream of annotators obtained.
+   */
+  public Stream<Annotator> streamAnnotators(final Annotator annotator) {
     if (annotator instanceof CompositeAnnotator compositeAnnotator) {
-      final var annotatorsField = FieldUtils.getField(compositeAnnotator.getClass(), "annotators", true);
+      final var annotatorsField = FieldUtils.getField(annotator.getClass(), "annotators", true);
       final Annotator[] annotators;
       try {
         annotators = (Annotator[]) annotatorsField.get(compositeAnnotator);
       } catch (final IllegalAccessException exception) {
-        return;
+        return Stream.empty();
       }
-      if (annotators != null) {
-        for (final var childAnnotator : annotators) {
-          dispatch(childAnnotator, value, action);
-        }
+      if (annotators == null) {
+        return Stream.empty();
       }
-    } else if (annotator instanceof EnhancedAnnotator enhancedAnnotator) {
-      action.accept(enhancedAnnotator, value);
+      return Stream
+          .of(annotators)
+          .flatMap(AnnotatorUtils::streamAnnotators);
+    } else {
+      return Stream.of(annotator);
     }
   }
 

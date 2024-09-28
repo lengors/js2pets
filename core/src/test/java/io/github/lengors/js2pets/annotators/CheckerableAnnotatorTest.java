@@ -7,6 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.sun.codemodel.JAnnotationUse;
+import com.sun.codemodel.JClass;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JMod;
@@ -36,15 +38,35 @@ class CheckerableAnnotatorTest {
 
     checkerableAnnotator.type(clazz);
 
-    final var annotations = parameter.annotations();
-    Assertions.assertFalse(annotations.isEmpty());
-
-    final var annotationClass = annotations
+    Assertions.assertTrue(parameter
+        .annotations()
         .stream()
-        .toList()
-        .getFirst()
-        .getAnnotationClass();
+        .map(JAnnotationUse::getAnnotationClass)
+        .map(JClass::fullName)
+        .anyMatch(Nullable.class.getName()::equals));
+  }
 
-    Assertions.assertEquals(Nullable.class.getName(), annotationClass.fullName());
+  @Test
+  void shouldAnnotateSetterMethodParameters() throws JClassAlreadyExistsException {
+    final var codeModel = new JCodeModel();
+    final var checkerableAnnotator = new CheckerableAnnotator();
+    final var clazz = codeModel._class("io.github.lengors.js2pets.annotators.Test");
+    final var field1 = clazz.field(JMod.PUBLIC, Integer.class, "field1");
+    final var setter0 = clazz.method(JMod.PUBLIC, void.class, "setField0");
+    final var setter1 = clazz.method(JMod.PUBLIC, void.class, "setField1");
+    final var param1 = setter1.param(Integer.class, "field1");
+
+    clazz.field(JMod.PUBLIC, Integer.class, "field0");
+    setter0.param(Integer.class, "field0");
+    field1.annotate(Nullable.class);
+
+    checkerableAnnotator.type(clazz);
+
+    Assertions.assertTrue(param1
+        .annotations()
+        .stream()
+        .map(JAnnotationUse::getAnnotationClass)
+        .map(JClass::fullName)
+        .anyMatch(Nullable.class.getName()::equals));
   }
 }
