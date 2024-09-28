@@ -1,3 +1,8 @@
+# [v1.1.1-alpha.1](https://github.com/lengors/js2pets/compare/v1.1.0...v1.1.1-alpha.1) (2024-09-28)
+
+## 🐛 Bug Fixes
+- [`9aec43c`](https://github.com/lengors/js2pets/commit/9aec43c)  Fields, related parameters and return types now annotated with &#x60;Nullable&#x60;
+
 # [v1.1.1-dev.1](https://github.com/lengors/js2pets/compare/v1.1.0...v1.1.1-dev.1) (2024-09-28)
 
 ## 🐛 Bug Fixes
