@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import lombok.experimental.UtilityClass;
 
 /**
- * Utility class for assertions with support for checkerframework.
+ * Utility class for assertions with support for Checkerframework.
  *
  * @author lengors
  */
