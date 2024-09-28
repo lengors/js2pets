@@ -11,11 +11,11 @@ import lombok.Getter;
  *
  * @author lengors
  */
+@Getter
 public class ConfigurationPropertyMissingException extends NullPointerException {
   /**
    * The name of the configuration property that is missing.
    */
-  @Getter
   private final String configurationPropertyName;
 
   /**

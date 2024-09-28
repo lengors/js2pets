@@ -16,6 +16,9 @@ import com.sun.codemodel.JType;
 import io.github.lengors.js2pets.rules.ConstructorRule;
 import io.github.lengors.js2pets.rules.ObjectRule;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 /**
  * {@link EnhancedRuleFactory} is a custom implementation of the {@link RuleFactory} that provides additional
  * functionality for generating or excluding no-argument constructors based on configuration settings. It extends the
@@ -33,7 +36,22 @@ public class EnhancedRuleFactory extends RuleFactory {
    * Default value indicating that whether to include no-argument constructors or not is infer from the
    * jsonschema2pojo's plugin configuration.
    */
-  private static final @Nullable Boolean DEFAULT_INCLUDE_NO_ARGS_CONSTRUCTOR = null;
+  public static final @Nullable Boolean DEFAULT_INCLUDE_NO_ARGS_CONSTRUCTOR = null;
+
+  /**
+   * Supplier to supply with a default schema store.
+   */
+  public static final Supplier<SchemaStore> DEFAULT_SCHEMA_STORE_SUPPLIER = SchemaStore::new;
+
+  /**
+   * Supplier to supply with a default generation config.
+   */
+  public static final Supplier<GenerationConfig> DEFAULT_GENERATION_CONFIG_SUPPLIER = DefaultGenerationConfig::new;
+
+  /**
+   * Function to generate a default annotator from the given generation config.
+   */
+  public static final Function<GenerationConfig, Annotator> DEFAULT_ANNOTATOR_FUNCTION = Jackson2Annotator::new;
 
   /**
    * Flag determining whether the no-args constructor should be included in the resulting classes. If null, the
@@ -69,7 +87,10 @@ public class EnhancedRuleFactory extends RuleFactory {
   protected EnhancedRuleFactory(
       final GenerationConfig generationConfig,
       final @Nullable Boolean includeNoArgsConstructor) {
-    this(generationConfig, new Jackson2Annotator(generationConfig), new SchemaStore(), includeNoArgsConstructor);
+    this(generationConfig,
+        DEFAULT_ANNOTATOR_FUNCTION.apply(generationConfig),
+        DEFAULT_SCHEMA_STORE_SUPPLIER.get(),
+        includeNoArgsConstructor);
   }
 
   /**
@@ -79,7 +100,7 @@ public class EnhancedRuleFactory extends RuleFactory {
    * @param includeNoArgsConstructor Whether to include the no-args constructor.
    */
   protected EnhancedRuleFactory(final @Nullable Boolean includeNoArgsConstructor) {
-    this(new DefaultGenerationConfig(), includeNoArgsConstructor);
+    this(DEFAULT_GENERATION_CONFIG_SUPPLIER.get(), includeNoArgsConstructor);
   }
 
   /**
@@ -121,6 +142,15 @@ public class EnhancedRuleFactory extends RuleFactory {
    * configuration.
    *
    * @return A {@link ConstructorRule} configured according to the factory settings.
+   * @throws IllegalArgumentException                                                         Thrown if the include
+   *                                                                                          no-args constructor flag
+   *                                                                                          is disabled and
+   *                                                                                          generating builders using
+   *                                                                                          inner classes is enabled.
+   * @throws io.github.lengors.js2pets.rules.exceptions.ConfigurationPropertyMissingException Thrown if the include
+   *                                                                                          no-args constructor flag
+   *                                                                                          value isn't set and
+   *                                                                                          cannot be inferred.
    */
   @Override
   public Rule<JDefinedClass, JDefinedClass> getConstructorRule() {
@@ -138,8 +168,8 @@ public class EnhancedRuleFactory extends RuleFactory {
   }
 
   /**
-   * {@link ExcludeNoArgsConstructor} is a specialized {@link EnhancedRuleFactory} that always excludes no-argument
-   * constructors. This is achieved by setting the includeNoArgsConstructor flag to false.
+   * {@link EnhancedRuleFactory.ExcludeNoArgsConstructor} is a specialized {@link EnhancedRuleFactory} that always
+   * excludes no-argument constructors. This is achieved by setting the includeNoArgsConstructor flag to false.
    * <br />
    * <br />
    * This nested class provides a convenient way to instantiate a factory with predefined behavior.
@@ -160,8 +190,8 @@ public class EnhancedRuleFactory extends RuleFactory {
     private static final @Nullable Boolean DEFAULT_INCLUDE_NO_ARGS_CONSTRUCTOR = false;
 
     /**
-     * Constructs an {@link ExcludeNoArgsConstructor} factory with the specified configuration, annotator, and schema
-     * store.
+     * Constructs an {@link EnhancedRuleFactory.ExcludeNoArgsConstructor} factory with the specified configuration,
+     * annotator, and schema store.
      *
      * @param generationConfig The generation configuration settings.
      * @param annotator        The annotator used for code generation.
@@ -175,8 +205,8 @@ public class EnhancedRuleFactory extends RuleFactory {
     }
 
     /**
-     * Constructs an {@link ExcludeNoArgsConstructor} factory with the specified configuration. Uses the default
-     * annotator and schema store.
+     * Constructs an {@link EnhancedRuleFactory.ExcludeNoArgsConstructor} factory with the specified configuration. Uses
+     * the default annotator and schema store.
      *
      * @param generationConfig The generation configuration settings.
      */
@@ -185,7 +215,7 @@ public class EnhancedRuleFactory extends RuleFactory {
     }
 
     /**
-     * Constructs an {@link ExcludeNoArgsConstructor} factory with default settings.
+     * Constructs an {@link EnhancedRuleFactory.ExcludeNoArgsConstructor} factory with default settings.
      */
     public ExcludeNoArgsConstructor() {
       super(DEFAULT_INCLUDE_NO_ARGS_CONSTRUCTOR);
@@ -193,8 +223,8 @@ public class EnhancedRuleFactory extends RuleFactory {
   }
 
   /**
-   * {@link IncludeNoArgsConstructor} is a specialized {@link EnhancedRuleFactory} that always includes no-argument
-   * constructors. This is achieved by setting the includeNoArgsConstructor flag to true.
+   * {@link EnhancedRuleFactory.IncludeNoArgsConstructor} is a specialized {@link EnhancedRuleFactory} that always
+   * includes no-argument constructors. This is achieved by setting the includeNoArgsConstructor flag to true.
    * <br />
    * <br />
    * This nested class provides a convenient way to instantiate a factory with predefined behavior.
@@ -215,8 +245,8 @@ public class EnhancedRuleFactory extends RuleFactory {
     private static final @Nullable Boolean DEFAULT_INCLUDE_NO_ARGS_CONSTRUCTOR = true;
 
     /**
-     * Constructs an {@link IncludeNoArgsConstructor} factory with the specified configuration, annotator, and schema
-     * store.
+     * Constructs an {@link EnhancedRuleFactory.IncludeNoArgsConstructor} factory with the specified configuration,
+     * annotator, and schema store.
      *
      * @param generationConfig The generation configuration settings.
      * @param annotator        The annotator used for code generation.
@@ -230,8 +260,8 @@ public class EnhancedRuleFactory extends RuleFactory {
     }
 
     /**
-     * Constructs an {@link IncludeNoArgsConstructor} factory with the specified configuration. Uses the default
-     * annotator and schema store.
+     * Constructs an {@link EnhancedRuleFactory.IncludeNoArgsConstructor} factory with the specified configuration. Uses
+     * the default annotator and schema store.
      *
      * @param generationConfig The generation configuration settings.
      */
@@ -240,7 +270,7 @@ public class EnhancedRuleFactory extends RuleFactory {
     }
 
     /**
-     * Constructs an {@link IncludeNoArgsConstructor} factory with default settings.
+     * Constructs an {@link EnhancedRuleFactory.IncludeNoArgsConstructor} factory with default settings.
      */
     public IncludeNoArgsConstructor() {
       super(DEFAULT_INCLUDE_NO_ARGS_CONSTRUCTOR);

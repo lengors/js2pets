@@ -1,0 +1,76 @@
+package io.github.lengors.js2pets.rules;
+
+import java.util.Collections;
+import java.util.Optional;
+
+import org.apache.commons.collections4.IteratorUtils;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jsonschema2pojo.Schema;
+import org.jsonschema2pojo.rules.Rule;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.sun.codemodel.JDocCommentable;
+import com.sun.codemodel.JFieldVar;
+import com.sun.codemodel.JMethod;
+
+import lombok.AllArgsConstructor;
+
+/**
+ * Not required rule for adding support to jsonschema2pojo for Checkerframework.
+ *
+ * @author lengors
+ */
+@AllArgsConstructor
+public class CheckerableNotRequiredRule implements Rule<JDocCommentable, JDocCommentable> {
+
+  /**
+   * The object rule that must be obtained from the super rule's factory.
+   */
+  private final Rule<JDocCommentable, JDocCommentable> superNotRequiredRule;
+
+  /**
+   * Applies this rule by annotating the given generatable with {@link Nullable} if it's either a non-required field or
+   * the respective getter.
+   *
+   * @param nodeName        The name of the JSON node being processed.
+   * @param node            The JSON node to which the rule is being applied.
+   * @param parent          The parent JSON node, or null if there isn't one.
+   * @param generatableType The property field, getter or setter that is being generated from the JSON schema.
+   * @param currentSchema   The current schema being processed.
+   * @return The property field, getter or setter after applying the rule.
+   */
+  @Override
+  public JDocCommentable apply(
+      final String nodeName,
+      final JsonNode node,
+      final JsonNode parent,
+      final JDocCommentable generatableType,
+      final Schema currentSchema) {
+    final var resultType = superNotRequiredRule.apply(nodeName, node, parent, generatableType, currentSchema);
+
+    final var required = Optional
+        .ofNullable(currentSchema
+            .getContent()
+            .get("required"))
+        .map(JsonNode::elements)
+        .map(IteratorUtils::toList)
+        .orElseGet(Collections::emptyList);
+    if (required
+        .stream()
+        .map(JsonNode::asText)
+        .anyMatch(nodeName::equals)) {
+      return resultType;
+    }
+
+    if (generatableType instanceof JFieldVar fieldVar) {
+      fieldVar.annotate(Nullable.class);
+    } else if (generatableType instanceof JMethod method && !method
+        .type()
+        .fullName()
+        .equals("void")) {
+      method.annotate(Nullable.class);
+    }
+
+    return resultType;
+  }
+}

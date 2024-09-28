@@ -17,7 +17,6 @@ import com.sun.codemodel.JMethod;
 
 import io.github.lengors.js2pets.annotators.AnnotatorUtils;
 import io.github.lengors.js2pets.rules.exceptions.ConfigurationPropertyMissingException;
-import lombok.AllArgsConstructor;
 import lombok.experimental.ExtensionMethod;
 
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import java.util.concurrent.atomic.AtomicReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -42,7 +41,6 @@ import java.lang.reflect.Modifier;
  *
  * @author lengors
  */
-@AllArgsConstructor
 @ExtensionMethod({ AnnotatorUtils.class })
 public class ConstructorRule implements Rule<JDefinedClass, JDefinedClass> {
   /**
@@ -54,12 +52,47 @@ public class ConstructorRule implements Rule<JDefinedClass, JDefinedClass> {
    * Flag determining whether the no-args constructor should be included in the resulting set of constructors or not.
    * Leaving the flag null will lead the rule to try to infer it from the plugin's configuration.
    */
-  private final @Nullable Boolean includeNoArgsConstructor;
+  private final AtomicReference<Boolean> includeNoArgsConstructorRef;
 
   /**
    * The constructor rule that must be obtained from the super rule's factory.
    */
   private final Rule<JDefinedClass, JDefinedClass> superConstructorRule;
+
+  /**
+   * Constructs constructor rule with given configuration.
+   *
+   * @param ruleFactory              The rule factory managing this constructor rule.
+   * @param includeNoArgsConstructor If it should include the no-args constructor or not, or infer it from
+   *                                 configuration.
+   * @param superConstructorRule     The super constructor rule to which part of the generation is delegated to.
+   * @throws IllegalArgumentException                                                         Thrown if the include
+   *                                                                                          no-args constructor flag
+   *                                                                                          is disabled and
+   *                                                                                          generating builders using
+   *                                                                                          inner classes is enabled.
+   * @throws io.github.lengors.js2pets.rules.exceptions.ConfigurationPropertyMissingException Thrown if the include
+   *                                                                                          no-args constructor flag
+   *                                                                                          value isn't set and
+   *                                                                                          cannot be inferred.
+   */
+  public ConstructorRule(
+      final RuleFactory ruleFactory,
+      final @Nullable Boolean includeNoArgsConstructor,
+      final Rule<JDefinedClass, JDefinedClass> superConstructorRule) {
+    this.ruleFactory = ruleFactory;
+    this.includeNoArgsConstructorRef = includeNoArgsConstructor != null
+        ? new AtomicReference<>(includeNoArgsConstructor)
+        : new AtomicReference<>();
+    this.superConstructorRule = superConstructorRule;
+
+    final var generationConfig = ruleFactory.getGenerationConfig();
+    if (generationConfig.isGenerateBuilders()
+        && generationConfig.isUseInnerClassBuilders()
+        && !isIncludeNoArgsConstructor(ruleFactory, includeNoArgsConstructorRef)) {
+      throw new IllegalArgumentException("Generation of builders is not supported with current configuration");
+    }
+  }
 
   /**
    * Applies this rule to the given {@link JDefinedClass}, potentially removing the no-args constructor and notifying
@@ -71,6 +104,10 @@ public class ConstructorRule implements Rule<JDefinedClass, JDefinedClass> {
    * @param type          The Java class that is being generated from the JSON schema.
    * @param currentSchema The current schema being processed.
    * @return The {@link JDefinedClass} after applying the rule.
+   * @throws io.github.lengors.js2pets.rules.exceptions.ConfigurationPropertyMissingException Thrown if the include
+   *                                                                                          no-args constructor flag
+   *                                                                                          value isn't set and
+   *                                                                                          cannot be inferred.
    */
   @Override
   public JDefinedClass apply(
@@ -81,7 +118,7 @@ public class ConstructorRule implements Rule<JDefinedClass, JDefinedClass> {
       final Schema currentSchema) {
     final var clazz = superConstructorRule.apply(nodeName, node, parent, type, currentSchema);
 
-    if (!isIncludeNoArgsConstructor()) {
+    if (!isIncludeNoArgsConstructor(ruleFactory, includeNoArgsConstructorRef)) {
       removeConstructors(clazz, ruleFactory);
     }
 
@@ -89,44 +126,6 @@ public class ConstructorRule implements Rule<JDefinedClass, JDefinedClass> {
     IteratorUtils.forEach(clazz.constructors(), constructor -> annotator.constructor(constructor));
 
     return clazz;
-  }
-
-  private boolean isIncludeNoArgsConstructor() {
-    return Optional
-        .ofNullable(includeNoArgsConstructor)
-        .orElseGet(() -> {
-          final var generationConfig = ruleFactory.getGenerationConfig();
-          final var method = MethodUtils.getAccessibleMethod(generationConfig.getClass(), "getPluginContext");
-          if (method == null) {
-            throw new ConfigurationPropertyMissingException(INCLUDE_NO_ARGS_CONSTRUCTOR_KEY);
-          }
-
-          final var pluginContext = invokeMethod(method, generationConfig, Map.class)
-              .orElseGet(Collections::emptyMap);
-          final var optPlugin = Optional
-              .ofNullable(pluginContext.get("pluginDescriptor"))
-              .filter(PluginDescriptor.class::isInstance)
-              .map(PluginDescriptor.class::cast)
-              .map(PluginDescriptor::getPlugin);
-
-          final var executionsCount = optPlugin
-              .map(Plugin::getExecutions)
-              .map(List::size)
-              .orElse(0);
-
-          if (executionsCount > 1) {
-            throw new ConfigurationPropertyMissingException(INCLUDE_NO_ARGS_CONSTRUCTOR_KEY);
-          }
-
-          return optPlugin
-              .map(Plugin::getConfiguration)
-              .filter(Xpp3Dom.class::isInstance)
-              .map(Xpp3Dom.class::cast)
-              .map(configuration -> configuration.getChild(INCLUDE_NO_ARGS_CONSTRUCTOR_KEY))
-              .map(Xpp3Dom::getValue)
-              .map(Boolean::parseBoolean)
-              .orElse(DEFAULT_INCLUDE_NO_ARGS_CONSTRUCTOR);
-        });
   }
 
   private static <T> Optional<T> invokeMethod(
@@ -141,6 +140,48 @@ public class ConstructorRule implements Rule<JDefinedClass, JDefinedClass> {
     } catch (final IllegalAccessException | InvocationTargetException exception) {
       return Optional.empty();
     }
+  }
+
+  private static boolean isIncludeNoArgsConstructor(
+      final RuleFactory ruleFactory,
+      final AtomicReference<Boolean> includeNoArgsConstructorRef) {
+    return includeNoArgsConstructorRef.updateAndGet(previous -> {
+      if (previous != null) {
+        return previous;
+      }
+
+      final var generationConfig = ruleFactory.getGenerationConfig();
+      final var method = MethodUtils.getAccessibleMethod(generationConfig.getClass(), "getPluginContext");
+      if (method == null) {
+        throw new ConfigurationPropertyMissingException(INCLUDE_NO_ARGS_CONSTRUCTOR_KEY);
+      }
+
+      final var pluginContext = invokeMethod(method, generationConfig, Map.class)
+          .orElseGet(Collections::emptyMap);
+      final var optPlugin = Optional
+          .ofNullable(pluginContext.get("pluginDescriptor"))
+          .filter(PluginDescriptor.class::isInstance)
+          .map(PluginDescriptor.class::cast)
+          .map(PluginDescriptor::getPlugin);
+
+      final var executionsCount = optPlugin
+          .map(Plugin::getExecutions)
+          .map(List::size)
+          .orElse(0);
+
+      if (executionsCount > 1) {
+        throw new ConfigurationPropertyMissingException(INCLUDE_NO_ARGS_CONSTRUCTOR_KEY);
+      }
+
+      return optPlugin
+          .map(Plugin::getConfiguration)
+          .filter(Xpp3Dom.class::isInstance)
+          .map(Xpp3Dom.class::cast)
+          .map(configuration -> configuration.getChild(INCLUDE_NO_ARGS_CONSTRUCTOR_KEY))
+          .map(Xpp3Dom::getValue)
+          .map(Boolean::parseBoolean)
+          .orElse(DEFAULT_INCLUDE_NO_ARGS_CONSTRUCTOR);
+    });
   }
 
   private static @Nullable Object readFieldValue(
