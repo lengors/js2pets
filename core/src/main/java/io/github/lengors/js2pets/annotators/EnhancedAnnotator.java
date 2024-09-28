@@ -25,7 +25,7 @@ public interface EnhancedAnnotator extends Annotator {
   /**
    * Listener to type generation finished for annotations.
    *
-   * @param type
+   * @param type The generated type.
    */
   default void type(JType type) {
 
