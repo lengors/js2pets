@@ -1,3 +1,8 @@
+# [v1.2.0-alpha.1](https://github.com/lengors/js2pets/compare/v1.1.1...v1.2.0-alpha.1) (2024-11-24)
+
+## ✨ New Features
+- [`3622c1f`](https://github.com/lengors/js2pets/commit/3622c1f)  Add &#x60;NullabilityAnnotator&#x60; and deprecate &#x60;CheckerableAnnotator&#x60; and related classes
+
 # [v1.2.0-dev.1](https://github.com/lengors/js2pets/compare/v1.1.1...v1.2.0-dev.1) (2024-11-24)
 
 ## ✨ New Features
