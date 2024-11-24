@@ -1,17 +1,25 @@
 package io.github.lengors.js2pets.codemodel;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.SequencedCollection;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.codemodel.JAnnotatable;
 import com.sun.codemodel.JAnnotationUse;
-import com.sun.codemodel.JClass;
 import com.sun.codemodel.JDefinedClass;
+import com.sun.codemodel.JFieldVar;
+import com.sun.codemodel.JFormatter;
+import com.sun.codemodel.JJavaName;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JType;
 import com.sun.codemodel.JVar;
@@ -77,12 +85,75 @@ public final class CodeModelUtils {
   public static boolean containsAnnotation(
       final JAnnotatable annotatable,
       final Class<? extends Annotation> annotation) {
+    return getAnnotationUsages(annotatable, annotation)
+        .findAny()
+        .isPresent();
+  }
+
+  /**
+   * Get all annotation usages for the given annotation type on the given annotatable.
+   *
+   * @param annotatable The given annotatable.
+   * @param annotation  The given annotation type.
+   * @return All annotation usages.
+   */
+  public static Stream<JAnnotationUse> getAnnotationUsages(
+      final JAnnotatable annotatable,
+      final Class<? extends Annotation> annotation) {
+    final var annotationName = annotation.getName();
     return annotatable
         .annotations()
         .stream()
-        .map(JAnnotationUse::getAnnotationClass)
-        .map(JClass::fullName)
-        .anyMatch(annotation.getName()::equals);
+        .filter(annotationUse -> annotationUse
+            .getAnnotationClass()
+            .fullName()
+            .equals(annotationName));
+  }
+
+  /**
+   * Retrieves {@link JsonProperty} value associated with given field.
+   *
+   * @param field The given field.
+   * @return The json property value.
+   */
+  public static @Nullable String getJsonPropertyValue(final JFieldVar field) {
+    return getAnnotationUsages(field, JsonProperty.class)
+        .map(annotation -> {
+          final var annotationValue = annotation
+              .getAnnotationMembers()
+              .get("value");
+
+          if (annotationValue == null) {
+            return null;
+          }
+
+          try (var writer = new StringWriter()) {
+            final var formatter = new JFormatter(writer);
+            annotationValue.generate(formatter);
+            final var stringifiedPropertyValue = writer.toString();
+            return stringifiedPropertyValue.substring(1, stringifiedPropertyValue.length() - 1);
+          } catch (final IOException exception) {
+            return null;
+          }
+        })
+        .filter(Objects::nonNull)
+        .findFirst()
+        .orElse(null);
+  }
+
+  /**
+   * Retries property name associated with field.
+   *
+   * @param field The field from which to retrieve the property name.
+   * @return The property name.
+   */
+  public static @Nullable String getPropertyName(final JFieldVar field) {
+    final var jsonProperty = getJsonPropertyValue(field);
+    if (jsonProperty == null) {
+      return null;
+    }
+    final var property = field.name();
+    return JJavaName.isJavaIdentifier(jsonProperty) ? property : property.substring(1);
   }
 
   /**
