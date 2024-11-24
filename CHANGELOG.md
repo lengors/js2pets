@@ -1,3 +1,8 @@
+# [v1.2.1-beta.1](https://github.com/lengors/js2pets/compare/v1.2.0...v1.2.1-beta.1) (2024-11-24)
+
+## 🐛 Bug Fixes
+- [`89fc586`](https://github.com/lengors/js2pets/commit/89fc586)  &#x60;NullabilityAnnotator&#x60; only annotates constructors, methods and parameters for matching fields annotated with &#x60;JsonProperty&#x60;
+
 # [v1.2.1-alpha.1](https://github.com/lengors/js2pets/compare/v1.2.0...v1.2.1-alpha.1) (2024-11-24)
 
 ## 🐛 Bug Fixes
