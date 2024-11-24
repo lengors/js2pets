@@ -10,6 +10,7 @@ import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JType;
 
+import io.github.lengors.js2pets.codemodel.CodeModelUtils;
 import io.github.lengors.js2pets.streams.StreamUtils;
 
 /**
@@ -47,9 +48,20 @@ public interface EnhancedAnnotator extends Annotator {
         .ifPresent(constructor -> {
           constructor.annotate(JsonCreator.class);
           for (final var parameter : constructor.params()) {
-            parameter
-                .annotate(JsonProperty.class)
-                .param("value", parameter.name());
+
+            final var field = clazz
+                .fields()
+                .get(parameter.name());
+            if (field == null) {
+              continue;
+            }
+
+            final var propertyName = CodeModelUtils.getJsonPropertyValue(field);
+            if (propertyName != null) {
+              parameter
+                  .annotate(JsonProperty.class)
+                  .param("value", propertyName);
+            }
           }
         });
   }
