@@ -17,7 +17,10 @@ import com.sun.codemodel.JMethod;
  * Not required rule for adding support to jsonschema2pojo for Checkerframework.
  *
  * @author lengors
+ * @deprecated Use {@link io.github.lengors.js2pets.annotators.NullabilityAnnotator} instead with an instance of
+ *             {@link io.github.lengors.js2pets.factories.EnhancedRuleFactory}.
  */
+@Deprecated(since = "1.2.0", forRemoval = true)
 public class CheckerableNotRequiredRule implements Rule<JDocCommentable, JDocCommentable> {
 
   /**

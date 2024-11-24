@@ -7,11 +7,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.sun.codemodel.JAnnotationUse;
-import com.sun.codemodel.JClass;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JCodeModel;
 import com.sun.codemodel.JMod;
+
+import io.github.lengors.js2pets.codemodel.CodeModelUtils;
 
 @ExtendWith(MockitoExtension.class)
 class CheckerableAnnotatorTest {
@@ -38,12 +38,7 @@ class CheckerableAnnotatorTest {
 
     checkerableAnnotator.type(clazz);
 
-    Assertions.assertTrue(parameter
-        .annotations()
-        .stream()
-        .map(JAnnotationUse::getAnnotationClass)
-        .map(JClass::fullName)
-        .anyMatch(Nullable.class.getName()::equals));
+    Assertions.assertTrue(CodeModelUtils.containsAnnotation(parameter, Nullable.class));
   }
 
   @Test
@@ -62,11 +57,6 @@ class CheckerableAnnotatorTest {
 
     checkerableAnnotator.type(clazz);
 
-    Assertions.assertTrue(param1
-        .annotations()
-        .stream()
-        .map(JAnnotationUse::getAnnotationClass)
-        .map(JClass::fullName)
-        .anyMatch(Nullable.class.getName()::equals));
+    Assertions.assertTrue(CodeModelUtils.containsAnnotation(param1, Nullable.class));
   }
 }

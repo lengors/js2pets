@@ -1,9 +1,16 @@
 package io.github.lengors.js2pets.annotators;
 
+import java.util.Comparator;
+
 import org.jsonschema2pojo.Annotator;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JType;
+
+import io.github.lengors.js2pets.streams.StreamUtils;
 
 /**
  * Enhanced annotator that extends the base functionality of jsonschema2pojo's allowing respective implementations to
@@ -18,7 +25,7 @@ public interface EnhancedAnnotator extends Annotator {
    *
    * @param constructor The generated constructor.
    */
-  default void constructor(JMethod constructor) {
+  default void constructor(final JMethod constructor) {
 
   }
 
@@ -27,7 +34,23 @@ public interface EnhancedAnnotator extends Annotator {
    *
    * @param type The generated type.
    */
-  default void type(JType type) {
+  default void type(final JType type) {
+    if (!(type instanceof JDefinedClass clazz)) {
+      return;
+    }
 
+    StreamUtils
+        .stream(clazz.constructors())
+        .max(Comparator.comparing(constructor -> constructor
+            .params()
+            .size()))
+        .ifPresent(constructor -> {
+          constructor.annotate(JsonCreator.class);
+          for (final var parameter : constructor.params()) {
+            parameter
+                .annotate(JsonProperty.class)
+                .param("value", parameter.name());
+          }
+        });
   }
 }
