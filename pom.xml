@@ -6,19 +6,33 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.github.lengors</groupId>
-  <artifactId>js2pets-parent</artifactId>
+  <artifactId>js2pets</artifactId>
   <version>${revision}</version>
-  <name>js2pets-parent</name>
-  <packaging>pom</packaging>
+  <name>js2pets</name>
+  <url>https://github.com/lengors/js2pets</url>
+  <description>Set of extensions and extra functionality for jsonschema2pojos library and plugins.</description>
 
-  <modules>
-    <module>javadoc</module>
-    <module>core</module>
-  </modules>
+  <developers>
+    <developer>
+      <name>lengors</name>
+      <email>24527258+lengors@users.noreply.github.com</email>
+    </developer>
+  </developers>
+
+  <scm>
+    <url>https://github.com/lengors/js2pets</url>
+  </scm>
+
+  <licenses>
+    <license>
+      <name>The Unlicense</name>
+      <url>https://unlicense.org/UNLICENSE</url>
+    </license>
+  </licenses>
 
   <properties>
     <!-- Version -->
-    <revision>1.1.1</revision>
+    <revision>1.2.0-dev.1</revision>
 
     <!-- Project general settings -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -27,26 +41,26 @@
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
 
-    <!-- Configure maven plugins -->
-    <flatten.flatten.skip>true</flatten.flatten.skip>
-    <maven.install.skip>true</maven.install.skip>
-    <maven.deploy.skip>true</maven.deploy.skip>
-
     <!-- Dependency and plugins versions -->
     <maven.commons-collections4.version>4.4</maven.commons-collections4.version>
+    <maven.central-publishing.version>0.5.0</maven.central-publishing.version>
     <maven.checkerframework.version>3.46.0</maven.checkerframework.version>
     <maven.jsonschema2pojo.version>1.2.1</maven.jsonschema2pojo.version>
     <maven.commons-lang3.version>3.16.0</maven.commons-lang3.version>
+    <maven.checkstyle.version>3.4.0</maven.checkstyle.version>
+    <maven.compiler.version>3.13.0</maven.compiler.version>
     <maven.mockito.version>5.12.0</maven.mockito.version>
-    <maven.flatten.version>1.6.0</maven.flatten.version>
-    <maven.lombok.version>1.18.34</maven.lombok.version>
+    <maven.jakarta.version>3.0.0</maven.jakarta.version>
+    <maven.javadoc.version>3.8.0</maven.javadoc.version>
+    <maven.jacoco.version>0.8.12</maven.jacoco.version>
+    <maven.source.version>3.3.1</maven.source.version>
     <maven.junit.version>5.10.3</maven.junit.version>
+    <maven.gpg.version>3.2.4</maven.gpg.version>
     <maven.api.version>3.9.9</maven.api.version>
 
     <!-- SonarCloud -->
     <sonar.organization>lengors-github</sonar.organization>
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    <sonar.projectBaseDir>core</sonar.projectBaseDir>
   </properties>
 
   <dependencyManagement>
@@ -58,73 +72,303 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-
-      <dependency>
-        <groupId>org.apache.maven</groupId>
-        <artifactId>maven-plugin-api</artifactId>
-        <version>${maven.api.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jsonschema2pojo</groupId>
-        <artifactId>jsonschema2pojo-core</artifactId>
-        <version>${maven.jsonschema2pojo.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-collections4</artifactId>
-        <version>${maven.commons-collections4.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-lang3</artifactId>
-        <version>${maven.commons-lang3.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.checkerframework</groupId>
-        <artifactId>checker-qual</artifactId>
-        <version>${maven.checkerframework.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.projectlombok</groupId>
-        <artifactId>lombok</artifactId>
-        <version>${maven.lombok.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-core</artifactId>
-        <version>${maven.mockito.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.mockito</groupId>
-        <artifactId>mockito-junit-jupiter</artifactId>
-        <version>${maven.mockito.version}</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-plugin-api</artifactId>
+      <version>${maven.api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jsonschema2pojo</groupId>
+      <artifactId>jsonschema2pojo-core</artifactId>
+      <version>${maven.jsonschema2pojo.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <dependency>
+      <groupId>jakarta.annotation</groupId>
+      <artifactId>jakarta.annotation-api</artifactId>
+      <version>${maven.jakarta.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-collections4</artifactId>
+      <version>${maven.commons-collections4.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${maven.commons-lang3.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.checkerframework</groupId>
+      <artifactId>checker-qual</artifactId>
+      <version>${maven.checkerframework.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${maven.mockito.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-junit-jupiter</artifactId>
+      <version>${maven.mockito.version}</version>
+    </dependency>
+  </dependencies>
+
   <build>
     <plugins>
+
+      <!-- Default checkstyle configuration is fine -->
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>flatten-maven-plugin</artifactId>
-        <version>${maven.flatten.version}</version>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <version>${maven.checkstyle.version}</version>
         <configuration>
-          <flattenMode>ossrh</flattenMode>
+          <includeTestSourceDirectory>true</includeTestSourceDirectory>
+          <configLocation>checkstyle.xml</configLocation>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>${maven.source.version}</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven.javadoc.version}</version>
+        <configuration>
+          <detectLinks>true</detectLinks>
+          <dependencyLinks>
+            <dependencyLink>
+              <groupId>org.jsonschema2pojo</groupId>
+              <artifactId>jsonschema2pojo-core</artifactId>
+              <url>
+                https://joelittlejohn.github.io/jsonschema2pojo/javadocs/${maven.jsonschema2pojo.version}/
+              </url>
+            </dependencyLink>
+            <dependencyLink>
+              <groupId>org.checkerframework</groupId>
+              <artifactId>checker-qual</artifactId>
+              <url>https://checkerframework.org/api</url>
+            </dependencyLink>
+          </dependencyLinks>
+          <doctitle>js2pets ${project.version} API</doctitle>
+          <links>
+            <!-- Indirect dependencies via jsonschema2pojo, should it be extracted and linked using
+            properties? -->
+            <link>
+              https://javadoc.io/doc/com.sun.codemodel/codemodel/2.6
+            </link>
+            <link>
+              https://javadoc.io/doc/com.fasterxml.jackson.core/jackson-databind/2.14.2
+            </link>
+          </links>
+          <windowtitle>js2pets ${project.version} API</windowtitle>
         </configuration>
         <executions>
           <execution>
-            <id>flatten</id>
-            <phase>process-resources</phase>
+            <id>attach-javadocs</id>
             <goals>
-              <goal>flatten</goal>
+              <goal>jar</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>${maven.gpg.version}</version>
+        <configuration>
+          <keyname>${MAVEN_GPG_KEYNAME}</keyname>
+        </configuration>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.sonatype.central</groupId>
+        <artifactId>central-publishing-maven-plugin</artifactId>
+        <version>${maven.central-publishing.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <publishingServerId>central</publishingServerId>
+          <autoPublish>true</autoPublish>
+          <waitUntil>published</waitUntil>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${maven.jacoco.version}</version>
+        <executions>
+          <execution>
+            <id>prepare-agent</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <goals>
+              <goal>report</goal>
+            </goals>
+            <configuration>
+              <formats>
+                <format>XML</format>
+              </formats>
+            </configuration>
           </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>checkerframework</id>
+      <activation>
+        <jdk>[1.8,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>${maven.compiler.version}</version>
+            <configuration>
+              <fork>true</fork>
+              <annotationProcessorPaths>
+                <path>
+                  <groupId>org.checkerframework</groupId>
+                  <artifactId>checker</artifactId>
+                  <version>${maven.checkerframework.version}</version>
+                </path>
+              </annotationProcessorPaths>
+              <annotationProcessors>
+                <annotationProcessor>org.checkerframework.checker.nullness.NullnessChecker</annotationProcessor>
+                <annotationProcessor>org.checkerframework.checker.resourceleak.ResourceLeakChecker</annotationProcessor>
+              </annotationProcessors>
+              <compilerArgs>
+                <arg>-Xmaxerrs</arg>
+                <arg>10000</arg>
+                <arg>-Xmaxwarns</arg>
+                <arg>10000</arg>
+                <arg>-AskipUses=^org[.]junit[.]jupiter[.]api[.]Assertions$</arg>
+              </compilerArgs>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>checkerframework-jdk8</id>
+      <activation>
+        <jdk>1.8</jdk>
+      </activation>
+      <!-- using github.com/google/error-prone-javac is required when running on JDK 8 -->
+      <properties>
+        <javac.version>9+181-r4173-1</javac.version>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <!-- This plugin execution will copy the com.google.errorprone:javac jar file to your
+            project’s output directory without adding that jar as an explicit dependency. -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>copy</goal>
+                </goals>
+                <phase>process-sources</phase>
+                <configuration>
+                  <artifact>com.google.errorprone:javac:${javac.version}:jar</artifact>
+                  <outputDirectory>${project.build.directory}/javac</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <compilerArgs combine.children="append">
+                <arg>-J-Xbootclasspath/p:${project.build.directory}/javac/javac-${javac.version}.jar</arg>
+              </compilerArgs>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>checkerframework-jdk9orlater</id>
+      <activation>
+        <jdk>[9,)</jdk>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+              <compilerArgs combine.children="append">
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED</arg>
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED</arg>
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED</arg>
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED</arg>
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED</arg>
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED</arg>
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED</arg>
+                <arg>-J--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED</arg>
+                <arg>-J--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED</arg>
+              </compilerArgs>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
