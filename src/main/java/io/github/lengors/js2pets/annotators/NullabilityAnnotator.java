@@ -1,14 +1,17 @@
 package io.github.lengors.js2pets.annotators;
 
 import java.util.Collections;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.checkerframework.checker.nullness.qual.NonNull;
 import org.jsonschema2pojo.AbstractAnnotator;
 import org.jsonschema2pojo.GenerationConfig;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.codemodel.JDefinedClass;
-import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JType;
 
 import io.github.lengors.js2pets.codemodel.CodeModelUtils;
@@ -57,6 +60,7 @@ public class NullabilityAnnotator extends AbstractAnnotator implements EnhancedA
         .fields()
         .values()
         .stream()
+        .filter(field -> CodeModelUtils.containsAnnotation(field, JsonProperty.class))
         .collect(Collectors.groupingBy(field -> AnnotationUtils.NON_NULLABLE_ANNOTATIONS
             .stream()
             .anyMatch(annotation -> CodeModelUtils.containsAnnotation(field, annotation))
@@ -69,18 +73,19 @@ public class NullabilityAnnotator extends AbstractAnnotator implements EnhancedA
         case NullabilityType.NULLABLE -> nullableAnnotations;
       };
       final var fields = fieldsByNullabilityType.getOrDefault(nullabilityType, Collections.emptyList());
-      final var fieldNames = fields
+      final var properties = (Set<@NonNull String>) fields
           .stream()
           .map(field -> {
             CodeModelUtils.safeAnnotate(field, annotations);
             return field;
           })
-          .map(JFieldVar::name)
+          .map(CodeModelUtils::getPropertyName)
+          .filter(Objects::nonNull)
           .collect(Collectors.toUnmodifiableSet());
 
-      CodeModelUtils.annotateInvokablesParameters(invokables.stream(), fieldNames, annotations);
+      CodeModelUtils.annotateInvokablesParameters(invokables.stream(), properties, annotations);
 
-      final var capitalizedFieldNames = fieldNames
+      final var capitalizedProperties = properties
           .stream()
           .map(StringUtils::capitalize)
           .collect(Collectors.toUnmodifiableSet());
@@ -96,7 +101,7 @@ public class NullabilityAnnotator extends AbstractAnnotator implements EnhancedA
               return false;
             }
 
-            return capitalizedFieldNames.contains(StringUtils.capitalize(methodName.replaceFirst(GETTER_PREFIX, "")));
+            return capitalizedProperties.contains(StringUtils.capitalize(methodName.replaceFirst(GETTER_PREFIX, "")));
           })
           .forEach(method -> CodeModelUtils.safeAnnotate(method, annotations));
     }
