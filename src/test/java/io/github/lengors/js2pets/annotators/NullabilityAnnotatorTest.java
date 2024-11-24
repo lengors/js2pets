@@ -53,11 +53,17 @@ class NullabilityAnnotatorTest {
     final var generationConfig = Mockito.mock(GenerationConfig.class);
     final var nullabilityAnnotator = new NullabilityAnnotator(generationConfig);
     final var clazz = codeModel._class("io.github.lengors.js2pets.annotators.Test");
-    clazz.field(JMod.PUBLIC, Integer.class, "field0");
-    clazz.field(JMod.PUBLIC, Integer.class, "field1");
+    final var field0 = clazz.field(JMod.PUBLIC, Integer.class, "field0");
+    final var field1 = clazz.field(JMod.PUBLIC, Integer.class, "field1");
     final var constructor = clazz.constructor(JMod.PUBLIC);
     final var param0 = constructor.param(Integer.class, "field0");
     final var param1 = constructor.param(Integer.class, "field1");
+    field0
+        .annotate(JsonProperty.class)
+        .param("value", "field0");
+    field1
+        .annotate(JsonProperty.class)
+        .param("value", "field1");
 
     nullabilityAnnotator.type(clazz);
 
@@ -92,6 +98,12 @@ class NullabilityAnnotatorTest {
     final var param0 = setter0.param(Integer.class, "field0");
     final var param1 = setter1.param(Integer.class, "field1");
 
+    field0
+        .annotate(JsonProperty.class)
+        .param("value", "field0");
+    field1
+        .annotate(JsonProperty.class)
+        .param("value", "field1");
     field1.annotate(jakarta.validation.constraints.NotNull.class);
     nullabilityAnnotator.type(clazz);
 
