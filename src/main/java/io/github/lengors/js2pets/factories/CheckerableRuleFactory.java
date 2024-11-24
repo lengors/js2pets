@@ -19,7 +19,10 @@ import io.github.lengors.js2pets.rules.CheckerableNotRequiredRule;
  * sure the {@link CheckerableAnnotator} is used. This allows jsonschema2pojo to properly support the Checkerframework.
  *
  * @author lengors
+ * @deprecated Use {@link io.github.lengors.js2pets.annotators.NullabilityAnnotator} instead with an instance of
+ *             {@link EnhancedRuleFactory}.
  */
+@Deprecated(since = "1.2.0", forRemoval = true)
 public class CheckerableRuleFactory extends EnhancedRuleFactory {
   /**
    * Constructs an {@link CheckerableRuleFactory} with the specified configuration, annotator, schema store, and no-args
@@ -160,7 +163,10 @@ public class CheckerableRuleFactory extends EnhancedRuleFactory {
    * </pre>
    *
    * @author lengors
+   * @deprecated Use {@link io.github.lengors.js2pets.annotators.NullabilityAnnotator} instead with an instance of
+   *             {@link EnhancedRuleFactory.ExcludeNoArgsConstructor}.
    */
+  @Deprecated(since = "1.2.0", forRemoval = true)
   public static class ExcludeNoArgsConstructor extends CheckerableRuleFactory {
     /**
      * Default value indicating that no-argument constructors should be excluded.
@@ -215,7 +221,10 @@ public class CheckerableRuleFactory extends EnhancedRuleFactory {
    * </pre>
    *
    * @author lengors
+   * @deprecated Use {@link io.github.lengors.js2pets.annotators.NullabilityAnnotator} instead with an instance of
+   *             {@link EnhancedRuleFactory.IncludeNoArgsConstructor}.
    */
+  @Deprecated(since = "1.2.0", forRemoval = true)
   public static class IncludeNoArgsConstructor extends CheckerableRuleFactory {
     /**
      * Default value indicating that no-argument constructors should be included.
