@@ -1,3 +1,8 @@
+# [v1.3.0-dev.1](https://github.com/lengors/js2pets/compare/v1.2.1...v1.3.0-dev.1) (2024-12-04)
+
+## ✨ New Features
+- [`6ac3131`](https://github.com/lengors/js2pets/commit/6ac3131)  Add type annotation for enum rule
+
 # [v1.2.1](https://github.com/lengors/js2pets/compare/v1.2.0...v1.2.1) (2024-11-24)
 
 ## 🐛 Bug Fixes

@@ -9,11 +9,13 @@ import org.jsonschema2pojo.SchemaStore;
 import org.jsonschema2pojo.rules.Rule;
 import org.jsonschema2pojo.rules.RuleFactory;
 
+import com.sun.codemodel.JClassContainer;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JPackage;
 import com.sun.codemodel.JType;
 
 import io.github.lengors.js2pets.rules.ConstructorRule;
+import io.github.lengors.js2pets.rules.EnumRule;
 import io.github.lengors.js2pets.rules.ObjectRule;
 
 import java.util.function.Function;
@@ -155,6 +157,16 @@ public class EnhancedRuleFactory extends RuleFactory {
   @Override
   public Rule<JDefinedClass, JDefinedClass> getConstructorRule() {
     return new ConstructorRule(this, includeNoArgsConstructor, super.getConstructorRule());
+  }
+
+  /**
+   * Returns a custom {@code EnumRule} that notifies the annotator when applicable.
+   *
+   * @return A {@link EnumRule} configured according to the factory settings.
+   */
+  @Override
+  public Rule<JClassContainer, JType> getEnumRule() {
+    return new EnumRule(this, super.getEnumRule());
   }
 
   /**
