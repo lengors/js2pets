@@ -20,6 +20,7 @@ import io.github.lengors.js2pets.annotators.AnnotatorUtils;
 import io.github.lengors.js2pets.annotators.CheckerableAnnotator;
 import io.github.lengors.js2pets.assertions.AssertionUtils;
 import io.github.lengors.js2pets.rules.ConstructorRule;
+import io.github.lengors.js2pets.rules.EnumRule;
 import io.github.lengors.js2pets.rules.ObjectRule;
 
 import java.util.function.Consumer;
@@ -40,6 +41,11 @@ class EnhancedRuleFactoryTest {
   private static final int OBJECT_RULE_CONSTRUCT_COUNT = 1;
 
   /**
+   * Number of objects constructed of type {@link EnumRule}.
+   */
+  private static final int ENUM_RULE_CONSTRUCT_COUNT = 1;
+
+  /**
    * Number of objects constructed of type {@link Jackson2Annotator}.
    */
   private static final int JACKSON2_ANNOTATOR_CONSTRUCT_COUNT = 1;
@@ -53,6 +59,11 @@ class EnhancedRuleFactoryTest {
    * Number of arguments for construction of objects of type {@link ObjectRule}.
    */
   private static final int OBJECT_RULE_ARGUMENT_COUNT = 2;
+
+  /**
+   * Number of arguments for construction of enums of type {@link EnumRule}.
+   */
+  private static final int ENUM_RULE_ARGUMENT_COUNT = 2;
 
   /**
    * Number of arguments for construction of objects of type {@link Jackson2Annotator}.
@@ -251,17 +262,39 @@ class EnhancedRuleFactoryTest {
       Assertions.assertInstanceOf(org.jsonschema2pojo.rules.ConstructorRule.class, actualSuperConstructorRule);
     }
 
-    try (var mockedConstruction = new EnhancedMockedConstruction<>(ObjectRule.class)) {
+    try (var mockedEnumRuleConstruction = new EnhancedMockedConstruction<>(EnumRule.class)) {
+      final var enumRule = enhancedRuleFactory.getEnumRule();
+
+      Assertions.assertInstanceOf(EnumRule.class, enumRule);
+
+      final var constructed = mockedEnumRuleConstruction.constructed();
+
+      Assertions.assertEquals(ENUM_RULE_CONSTRUCT_COUNT, constructed.size());
+
+      final var mockedEnumRule = constructed.getFirst();
+      final var arguments = mockedEnumRuleConstruction.getArguments(mockedEnumRule);
+
+      AssertionUtils.assertNotNull(arguments);
+      Assertions.assertEquals(ENUM_RULE_ARGUMENT_COUNT, arguments.size());
+
+      final var actualRuleFactory = arguments.get(0);
+      final var actualSuperEnumRule = arguments.get(1);
+
+      Assertions.assertEquals(enhancedRuleFactory, actualRuleFactory);
+      Assertions.assertInstanceOf(org.jsonschema2pojo.rules.EnumRule.class, actualSuperEnumRule);
+    }
+
+    try (var mockedObjectRuleConstruction = new EnhancedMockedConstruction<>(ObjectRule.class)) {
       final var objectRule = enhancedRuleFactory.getObjectRule();
 
       Assertions.assertInstanceOf(ObjectRule.class, objectRule);
 
-      final var constructed = mockedConstruction.constructed();
+      final var constructed = mockedObjectRuleConstruction.constructed();
 
       Assertions.assertEquals(OBJECT_RULE_CONSTRUCT_COUNT, constructed.size());
 
       final var mockedObjectRule = constructed.getFirst();
-      final var arguments = mockedConstruction.getArguments(mockedObjectRule);
+      final var arguments = mockedObjectRuleConstruction.getArguments(mockedObjectRule);
 
       AssertionUtils.assertNotNull(arguments);
       Assertions.assertEquals(OBJECT_RULE_ARGUMENT_COUNT, arguments.size());
