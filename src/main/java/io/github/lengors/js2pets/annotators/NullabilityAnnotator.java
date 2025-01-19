@@ -83,7 +83,7 @@ public class NullabilityAnnotator extends AbstractAnnotator implements EnhancedA
           .filter(Objects::nonNull)
           .collect(Collectors.toUnmodifiableSet());
 
-      CodeModelUtils.annotateInvokablesParameters(invokables.stream(), properties, annotations);
+      CodeModelUtils.annotateInvokablesParameters(invokables.stream(), properties, annotations, true);
 
       final var capitalizedProperties = properties
           .stream()
