@@ -1,3 +1,13 @@
+# [v1.3.1-alpha.1](https://github.com/lengors/js2pets/compare/v1.3.0...v1.3.1-alpha.1) (2025-01-19)
+
+## 🐛 Bug Fixes
+- [`2f87954`](https://github.com/lengors/js2pets/commit/2f87954)  Match parameters to fields on &#x60;NullabilityAnnotator&#x60; correctly
+
+# [v1.3.1-dev.1](https://github.com/lengors/js2pets/compare/v1.3.0...v1.3.1-dev.1) (2025-01-19)
+
+## 🐛 Bug Fixes
+- [`2f87954`](https://github.com/lengors/js2pets/commit/2f87954)  Match parameters to fields on &#x60;NullabilityAnnotator&#x60; correctly
+
 # [v1.3.0](https://github.com/lengors/js2pets/compare/v1.2.1...v1.3.0) (2024-12-04)
 
 ## ✨ New Features

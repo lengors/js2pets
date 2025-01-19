@@ -17,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sun.codemodel.JAnnotatable;
 import com.sun.codemodel.JAnnotationUse;
 import com.sun.codemodel.JDefinedClass;
-import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JFormatter;
 import com.sun.codemodel.JJavaName;
 import com.sun.codemodel.JMethod;
@@ -60,18 +59,24 @@ public final class CodeModelUtils {
    * Safely annotates the parameters for all the invokables in the given stream with the given list of annotations for
    * the matching fields.
    *
-   * @param invokables  The invokables to annotate.
-   * @param fieldNames  The set of field names to match the parameters with.
-   * @param annotations The list of annotations to annotate with.
+   * @param invokables      The invokables to annotate.
+   * @param fieldNames      The set of field names to match the parameters with.
+   * @param annotations     The list of annotations to annotate with.
+   * @param usePropertyName Uses {@link JsonProperty}'s value as parameter name if {@code true}, uses parameter's
+   *                        identifier otherwise.
    */
   public static void annotateInvokablesParameters(
       final Stream<JMethod> invokables,
       final Set<String> fieldNames,
-      final Collection<Class<? extends Annotation>> annotations) {
+      final Collection<Class<? extends Annotation>> annotations,
+      final boolean usePropertyName) {
     invokables
         .map(JMethod::params)
         .flatMap(List::stream)
-        .filter(param -> fieldNames.contains(param.name()))
+        .filter(param -> {
+          final var paramName = usePropertyName ? getPropertyName(param) : param.name();
+          return paramName != null && fieldNames.contains(paramName);
+        })
         .forEach(param -> safeAnnotate(param, annotations));
   }
 
@@ -111,13 +116,13 @@ public final class CodeModelUtils {
   }
 
   /**
-   * Retrieves {@link JsonProperty} value associated with given field.
+   * Retrieves {@link JsonProperty} value associated with given variable.
    *
-   * @param field The given field.
+   * @param variable The given variable.
    * @return The json property value.
    */
-  public static @Nullable String getJsonPropertyValue(final JFieldVar field) {
-    return getAnnotationUsages(field, JsonProperty.class)
+  public static @Nullable String getJsonPropertyValue(final JVar variable) {
+    return getAnnotationUsages(variable, JsonProperty.class)
         .map(annotation -> {
           final var annotationValue = annotation
               .getAnnotationMembers()
@@ -142,17 +147,17 @@ public final class CodeModelUtils {
   }
 
   /**
-   * Retries property name associated with field.
+   * Retries property name associated with variable.
    *
-   * @param field The field from which to retrieve the property name.
+   * @param variable The field from which to retrieve the property name.
    * @return The property name.
    */
-  public static @Nullable String getPropertyName(final JFieldVar field) {
-    final var jsonProperty = getJsonPropertyValue(field);
+  public static @Nullable String getPropertyName(final JVar variable) {
+    final var jsonProperty = getJsonPropertyValue(variable);
     if (jsonProperty == null) {
       return null;
     }
-    final var property = field.name();
+    final var property = variable.name();
     return JJavaName.isJavaIdentifier(jsonProperty) ? property : property.substring(1);
   }
 

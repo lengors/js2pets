@@ -104,6 +104,12 @@ class NullabilityAnnotatorTest {
     field1
         .annotate(JsonProperty.class)
         .param("value", "field1");
+    param0
+        .annotate(JsonProperty.class)
+        .param("value", "field0");
+    param1
+        .annotate(JsonProperty.class)
+        .param("value", "field1");
     field1.annotate(jakarta.validation.constraints.NotNull.class);
     nullabilityAnnotator.type(clazz);
 
