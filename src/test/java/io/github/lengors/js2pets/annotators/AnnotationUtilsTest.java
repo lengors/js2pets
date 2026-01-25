@@ -27,11 +27,11 @@ class AnnotationUtilsTest {
         .when(generationConfig.isIncludeJsr303Annotations())
         .thenReturn(false);
 
-    final var nullableAnnotations = AnnotationUtils.getNullableAnnotations(generationConfig);
-    final var nonNullableAnnotations = AnnotationUtils.getNonNullableAnnotations(generationConfig);
+    final var nullableAnnotations = AnnotationUtils.getNullableAnnotations(generationConfig, false);
+    final var nonNullableAnnotations = AnnotationUtils.getNonNullableAnnotations(generationConfig, false);
 
-    AssertionUtils.assertListMatches(List.of(Nullable.class, jakarta.annotation.Nullable.class), nullableAnnotations);
-    AssertionUtils.assertListMatches(List.of(NonNull.class, jakarta.annotation.Nonnull.class), nonNullableAnnotations);
+    AssertionUtils.assertListMatches(List.of(jakarta.annotation.Nullable.class), nullableAnnotations);
+    AssertionUtils.assertListMatches(List.of(jakarta.annotation.Nonnull.class), nonNullableAnnotations);
   }
 
   @Test
@@ -47,11 +47,11 @@ class AnnotationUtilsTest {
         .when(generationConfig.isIncludeJsr303Annotations())
         .thenReturn(false);
 
-    final var nullableAnnotations = AnnotationUtils.getNullableAnnotations(generationConfig);
-    final var nonNullableAnnotations = AnnotationUtils.getNonNullableAnnotations(generationConfig);
+    final var nullableAnnotations = AnnotationUtils.getNullableAnnotations(generationConfig, false);
+    final var nonNullableAnnotations = AnnotationUtils.getNonNullableAnnotations(generationConfig, false);
 
-    AssertionUtils.assertListMatches(List.of(Nullable.class, javax.annotation.Nullable.class), nullableAnnotations);
-    AssertionUtils.assertListMatches(List.of(NonNull.class, javax.annotation.Nonnull.class), nonNullableAnnotations);
+    AssertionUtils.assertListMatches(List.of(javax.annotation.Nullable.class), nullableAnnotations);
+    AssertionUtils.assertListMatches(List.of(javax.annotation.Nonnull.class), nonNullableAnnotations);
   }
 
   @Test
@@ -67,12 +67,12 @@ class AnnotationUtilsTest {
         .when(generationConfig.isIncludeJsr303Annotations())
         .thenReturn(true);
 
-    final var nullableAnnotations = AnnotationUtils.getNullableAnnotations(generationConfig);
-    final var nonNullableAnnotations = AnnotationUtils.getNonNullableAnnotations(generationConfig);
+    final var nullableAnnotations = AnnotationUtils.getNullableAnnotations(generationConfig, false);
+    final var nonNullableAnnotations = AnnotationUtils.getNonNullableAnnotations(generationConfig, false);
 
-    AssertionUtils.assertListMatches(List.of(Nullable.class), nullableAnnotations);
+    AssertionUtils.assertListMatches(List.of(jakarta.annotation.Nullable.class), nullableAnnotations);
     AssertionUtils.assertListMatches(
-        List.of(NonNull.class, jakarta.validation.constraints.NotNull.class),
+        List.of(jakarta.validation.constraints.NotNull.class, jakarta.annotation.Nonnull.class),
         nonNullableAnnotations);
   }
 
@@ -89,12 +89,12 @@ class AnnotationUtilsTest {
         .when(generationConfig.isIncludeJsr303Annotations())
         .thenReturn(true);
 
-    final var nullableAnnotations = AnnotationUtils.getNullableAnnotations(generationConfig);
-    final var nonNullableAnnotations = AnnotationUtils.getNonNullableAnnotations(generationConfig);
+    final var nullableAnnotations = AnnotationUtils.getNullableAnnotations(generationConfig, false);
+    final var nonNullableAnnotations = AnnotationUtils.getNonNullableAnnotations(generationConfig, false);
 
-    AssertionUtils.assertListMatches(List.of(Nullable.class), nullableAnnotations);
+    AssertionUtils.assertListMatches(List.of(), nullableAnnotations);
     AssertionUtils.assertListMatches(
-        List.of(NonNull.class, javax.validation.constraints.NotNull.class),
+        List.of(javax.validation.constraints.NotNull.class),
         nonNullableAnnotations);
   }
 
@@ -108,8 +108,8 @@ class AnnotationUtilsTest {
         .when(generationConfig.isIncludeJsr303Annotations())
         .thenReturn(false);
 
-    final var nullableAnnotations = AnnotationUtils.getNullableAnnotations(generationConfig);
-    final var nonNullableAnnotations = AnnotationUtils.getNonNullableAnnotations(generationConfig);
+    final var nullableAnnotations = AnnotationUtils.getNullableAnnotations(generationConfig, true);
+    final var nonNullableAnnotations = AnnotationUtils.getNonNullableAnnotations(generationConfig, true);
 
     AssertionUtils.assertListMatches(List.of(Nullable.class), nullableAnnotations);
     AssertionUtils.assertListMatches(List.of(NonNull.class), nonNullableAnnotations);
