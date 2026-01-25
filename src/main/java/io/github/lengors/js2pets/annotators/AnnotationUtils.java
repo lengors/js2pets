@@ -57,13 +57,17 @@ public final class AnnotationUtils {
    * Gets the non-nullable annotations based on generation configuration.
    *
    * @param generationConfig The generation configuration.
+   * @param useCheckerframeworkAnnotations Whether to include Checkerframework annotations.
    * @return The non-nullable annotation classes.
    */
-  public static List<Class<? extends Annotation>> getNonNullableAnnotations(final GenerationConfig generationConfig) {
+  public static List<Class<? extends Annotation>> getNonNullableAnnotations(
+    final GenerationConfig generationConfig,
+    final boolean useCheckerframeworkAnnotations) {
     final var annotations = new ArrayList<Class<? extends Annotation>>();
     if (generationConfig.isIncludeJsr303Annotations()) {
       if (generationConfig.isUseJakartaValidation()) {
         annotations.add(jakarta.validation.constraints.NotNull.class);
+        annotations.add(jakarta.annotation.Nonnull.class);
       } else {
         annotations.add(javax.validation.constraints.NotNull.class);
       }
@@ -77,7 +81,9 @@ public final class AnnotationUtils {
       }
     }
 
-    annotations.add(NonNull.class);
+    if (useCheckerframeworkAnnotations) {
+      annotations.add(NonNull.class);
+    }
 
     return Collections.unmodifiableList(annotations);
   }
@@ -86,10 +92,17 @@ public final class AnnotationUtils {
    * Gets the nullable annotations based on generation configuration.
    *
    * @param generationConfig The generation configuration.
+   * @param useCheckerframeworkAnnotations Whether to include Checkerframework annotations.
    * @return The nullable annotation classes.
    */
-  public static List<Class<? extends Annotation>> getNullableAnnotations(final GenerationConfig generationConfig) {
+  public static List<Class<? extends Annotation>> getNullableAnnotations(
+    final GenerationConfig generationConfig,
+    final boolean useCheckerframeworkAnnotations) {
     final var annotations = new ArrayList<Class<? extends Annotation>>();
+    if (generationConfig.isIncludeJsr303Annotations() && generationConfig.isUseJakartaValidation()) {
+      annotations.add(jakarta.annotation.Nullable.class);
+    }
+
     if (generationConfig.isIncludeJsr305Annotations()) {
       if (generationConfig.isUseJakartaValidation()) {
         annotations.add(jakarta.annotation.Nullable.class);
@@ -98,7 +111,9 @@ public final class AnnotationUtils {
       }
     }
 
-    annotations.add(Nullable.class);
+    if (useCheckerframeworkAnnotations) {
+      annotations.add(Nullable.class);
+    }
 
     return Collections.unmodifiableList(annotations);
   }

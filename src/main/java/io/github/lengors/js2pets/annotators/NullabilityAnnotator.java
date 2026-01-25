@@ -28,12 +28,30 @@ public class NullabilityAnnotator extends AbstractAnnotator implements EnhancedA
   private static final String GETTER_PREFIX = "get";
 
   /**
+   * Whether to use Checkerframework annotations.
+   */
+  private final boolean useCheckerframeworkAnnotations;
+
+  /**
    * Instantiates annotator with generation configuration.
    *
    * @param generationConfig The injected generation configuration.
    */
   public NullabilityAnnotator(final GenerationConfig generationConfig) {
+    this(generationConfig, true);
+  }
+
+  /**
+   * Instantiates annotator with generation configuration and additional nullable annotations.
+   *
+   * @param generationConfig The injected generation configuration.
+   * @param useCheckerframeworkAnnotations Whether to use Checkerframework annotations.
+   */
+  public NullabilityAnnotator(
+    final GenerationConfig generationConfig,
+    final boolean useCheckerframeworkAnnotations) {
     super(generationConfig);
+    this.useCheckerframeworkAnnotations = useCheckerframeworkAnnotations;
   }
 
   /**
@@ -50,8 +68,12 @@ public class NullabilityAnnotator extends AbstractAnnotator implements EnhancedA
       return;
     }
 
-    final var nullableAnnotations = AnnotationUtils.getNullableAnnotations(getGenerationConfig());
-    final var nonNullableAnnotations = AnnotationUtils.getNonNullableAnnotations(getGenerationConfig());
+    final var nullableAnnotations = AnnotationUtils.getNullableAnnotations(
+      getGenerationConfig(),
+       useCheckerframeworkAnnotations);
+    final var nonNullableAnnotations = AnnotationUtils.getNonNullableAnnotations(
+      getGenerationConfig(),
+       useCheckerframeworkAnnotations);
 
     final var classStructure = CodeModelUtils.listClassStructure(clazz);
     final var invokables = CodeModelUtils.listInvokables(classStructure);
@@ -106,6 +128,6 @@ public class NullabilityAnnotator extends AbstractAnnotator implements EnhancedA
           .forEach(method -> CodeModelUtils.safeAnnotate(method, annotations));
     }
 
-    CodeModelUtils.annotateEqualsMethod(clazz);
+    CodeModelUtils.annotateEqualsMethod(clazz, nullableAnnotations);
   }
 }

@@ -47,6 +47,6 @@ public class CheckerableAnnotator extends NoopAnnotator implements EnhancedAnnot
         nullableFields,
         AnnotationUtils.CHECKERFRAMEWORK_NULLABLE_ANNOTATION,
         false);
-    CodeModelUtils.annotateEqualsMethod(clazz);
+    CodeModelUtils.annotateEqualsMethod(clazz, AnnotationUtils.CHECKERFRAMEWORK_NULLABLE_ANNOTATION);
   }
 }

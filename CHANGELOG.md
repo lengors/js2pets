@@ -1,3 +1,18 @@
+# [v1.4.0-alpha.1](https://github.com/lengors/js2pets/compare/v1.3.1...v1.4.0-alpha.1) (2026-01-25)
+
+## ✨ New Features
+- [`0371100`](https://github.com/lengors/js2pets/commit/0371100)  Add support for controlling emission of checkerframework annotations
+
+# [v1.4.0-dev.1](https://github.com/lengors/js2pets/compare/v1.3.1...v1.4.0-dev.1) (2026-01-25)
+
+## ✨ New Features
+- [`0371100`](https://github.com/lengors/js2pets/commit/0371100)  Add support for controlling emission of checkerframework annotations
+
+# [v1.3.1](https://github.com/lengors/js2pets/compare/v1.3.0...v1.3.1) (2025-01-19)
+
+## 🐛 Bug Fixes
+- [`2f87954`](https://github.com/lengors/js2pets/commit/2f87954)  Match parameters to fields on &#x60;NullabilityAnnotator&#x60; correctly
+
 # [v1.3.1-beta.1](https://github.com/lengors/js2pets/compare/v1.3.0...v1.3.1-beta.1) (2025-01-19)
 
 ## 🐛 Bug Fixes
