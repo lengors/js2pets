@@ -40,8 +40,11 @@ public final class CodeModelUtils {
    * Safely annotates equals method for the given class.
    *
    * @param clazz The given class.
+   * @param nullableAnnotations The nullable annotations to use.
    */
-  public static void annotateEqualsMethod(final JDefinedClass clazz) {
+  public static void annotateEqualsMethod(
+    final JDefinedClass clazz,
+    final Collection<Class<? extends Annotation>> nullableAnnotations) {
     final var objectRef = clazz
         .owner()
         ._ref(Object.class);
@@ -52,7 +55,7 @@ public final class CodeModelUtils {
         }))
         .map(JMethod::params)
         .map(SequencedCollection::getFirst)
-        .ifPresent(parameter -> safeAnnotate(parameter, AnnotationUtils.CHECKERFRAMEWORK_NULLABLE_ANNOTATION));
+        .ifPresent(parameter -> safeAnnotate(parameter, nullableAnnotations));
   }
 
   /**
@@ -240,6 +243,13 @@ public final class CodeModelUtils {
             .parentContainer()
             .isClass() || !AnnotationUtils.CHECKERFRAMEWORK_NULLABILITY_ANNOTATIONS.contains(annotation.getName()))
         : annotationStream;
-    postProcessedAnnotationStream.forEach(annotatable::annotate);
+    final var postProcessedAnnotations = postProcessedAnnotationStream.toList();
+    postProcessedAnnotations.forEach(annotatable::annotate);
+
+    if (annotatableType != null && !postProcessedAnnotations.isEmpty()) {
+      annotatable
+        .annotate(SuppressWarnings.class)
+        .param("value", "nullness.on.outer");
+    }
   }
 }
