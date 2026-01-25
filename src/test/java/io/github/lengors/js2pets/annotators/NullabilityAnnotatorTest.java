@@ -1,7 +1,5 @@
 package io.github.lengors.js2pets.annotators;
 
-import org.checkerframework.checker.nullness.qual.NonNull;
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jsonschema2pojo.GenerationConfig;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -38,13 +36,24 @@ class NullabilityAnnotatorTest {
     final var codeModel = new JCodeModel();
     final var generationConfig = Mockito.mock(GenerationConfig.class);
     final var nullabilityAnnotator = new NullabilityAnnotator(generationConfig);
+
+    Mockito
+        .when(generationConfig.isUseJakartaValidation())
+        .thenReturn(true);
+    Mockito
+        .when(generationConfig.isIncludeJsr303Annotations())
+        .thenReturn(true);
+    Mockito
+        .when(generationConfig.isIncludeJsr305Annotations())
+        .thenReturn(false);
+
     final var clazz = codeModel._class("io.github.lengors.js2pets.annotators.Test");
     final var method = clazz.method(JMod.PUBLIC, boolean.class, "equals");
     final var parameter = method.param(Object.class, "other");
 
     nullabilityAnnotator.type(clazz);
 
-    Assertions.assertTrue(CodeModelUtils.containsAnnotation(parameter, Nullable.class));
+    Assertions.assertTrue(CodeModelUtils.containsAnnotation(parameter, jakarta.annotation.Nullable.class));
   }
 
   @Test
@@ -113,16 +122,16 @@ class NullabilityAnnotatorTest {
     field1.annotate(jakarta.validation.constraints.NotNull.class);
     nullabilityAnnotator.type(clazz);
 
-    Assertions.assertTrue(CodeModelUtils.containsAnnotation(param0, Nullable.class));
-    Assertions.assertTrue(CodeModelUtils.containsAnnotation(param1, NonNull.class));
+    Assertions.assertTrue(CodeModelUtils.containsAnnotation(param0, jakarta.annotation.Nullable.class));
+    Assertions.assertTrue(CodeModelUtils.containsAnnotation(param1, jakarta.annotation.Nonnull.class));
     Assertions.assertTrue(CodeModelUtils.containsAnnotation(param1, jakarta.validation.constraints.NotNull.class));
 
-    Assertions.assertTrue(CodeModelUtils.containsAnnotation(field0, Nullable.class));
-    Assertions.assertTrue(CodeModelUtils.containsAnnotation(field1, NonNull.class));
+    Assertions.assertTrue(CodeModelUtils.containsAnnotation(field0, jakarta.annotation.Nullable.class));
+    Assertions.assertTrue(CodeModelUtils.containsAnnotation(field1, jakarta.annotation.Nonnull.class));
     Assertions.assertTrue(CodeModelUtils.containsAnnotation(field1, jakarta.validation.constraints.NotNull.class));
 
-    Assertions.assertTrue(CodeModelUtils.containsAnnotation(getter0, Nullable.class));
-    Assertions.assertTrue(CodeModelUtils.containsAnnotation(getter1, NonNull.class));
+    Assertions.assertTrue(CodeModelUtils.containsAnnotation(getter0, jakarta.annotation.Nullable.class));
+    Assertions.assertTrue(CodeModelUtils.containsAnnotation(getter1, jakarta.annotation.Nonnull.class));
     Assertions.assertTrue(CodeModelUtils.containsAnnotation(getter1, jakarta.validation.constraints.NotNull.class));
   }
 }
